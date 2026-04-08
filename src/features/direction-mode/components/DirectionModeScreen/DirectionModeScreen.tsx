@@ -43,7 +43,7 @@ async function searchPlaces(query: string): Promise<PlaceResult[]> {
 
 async function fetchNearbyPlaces(place: PlaceResult): Promise<NearbyPlaceResult[]> {
   const response = await fetch(
-    `/api/places/nearby?lat=${place.lat}&lng=${place.lng}&radius=3000&limit=12`
+    `/api/places/nearby?lat=${place.lat}&lng=${place.lng}&radius=2200&limit=16`
   );
   const payload = (await response.json()) as { places?: NearbyPlaceResult[]; error?: string };
 
@@ -241,7 +241,7 @@ export function DirectionModeScreen({ content, actions, status }: DirectionModeS
 
       setQuestions(nextQuestions);
     } catch (error) {
-      setRoundError(error instanceof Error ? error.message : content.errors.roundFailed);
+      setRoundError(error instanceof Error ? error.message : content.errors.nearbyFailed);
     } finally {
       setRoundLoading(false);
     }

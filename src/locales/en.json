@@ -86,7 +86,7 @@
     "errors": {
       "roundBuild": "Could not build 5 questions for this place yet. Try a bigger area or landmark.",
       "searchFailed": "Failed to search places.",
-      "nearbyFailed": "Failed to fetch nearby places.",
+      "nearbyFailed": "Nearby place service timed out. Please try again with a larger landmark or city area.",
       "roundFailed": "Failed to create the question set."
     }
   }

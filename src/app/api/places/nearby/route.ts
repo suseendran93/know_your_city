@@ -16,7 +16,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ places });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to fetch nearby places.";
+    const message =
+      error instanceof Error && error.message.includes("status 504")
+        ? "Nearby place service timed out. Please try again with a larger landmark or city area."
+        : "Failed to fetch nearby places.";
 
     return NextResponse.json({ error: message }, { status: 502 });
   }
