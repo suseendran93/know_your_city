@@ -10,12 +10,23 @@
   gap: $space-sm;
 }
 
+.infoGroup {
+  display: grid;
+  gap: $space-2xs;
+}
+
+.userPill,
 .cityPill {
   margin: 0;
   color: $color-primary-strong;
   background-color: $color-primary-soft;
   border-radius: $radius-pill;
   padding: $space-2xs $space-sm;
+}
+
+.userPill {
+  background-color: $color-tertiary-soft;
+  color: $color-tertiary-strong;
 }
 
 .settingsLink {

@@ -109,16 +109,20 @@ export default function AuthPage() {
         </div>
 
         <form className={styles.form} onSubmit={onSubmit}>
-          <label className={`type-label ${styles.label}`} htmlFor="name">
-            {messages.auth.nameLabel}
-          </label>
-          <input
-            id="name"
-            className={`type-body-md ${styles.input}`}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder={messages.auth.namePlaceholder}
-          />
+          {mode === "signup" ? (
+            <>
+              <label className={`type-label ${styles.label}`} htmlFor="name">
+                {messages.auth.nameLabel}
+              </label>
+              <input
+                id="name"
+                className={`type-body-md ${styles.input}`}
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder={messages.auth.namePlaceholder}
+              />
+            </>
+          ) : null}
 
           <label className={`type-label ${styles.label}`} htmlFor="email">
             {messages.auth.emailLabel}

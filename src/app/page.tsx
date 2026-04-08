@@ -10,8 +10,9 @@ import styles from "./page.module.scss";
 
 export default function HomePage() {
   const messages = getMessages();
-  const { city } = useAppContext();
+  const { city, user } = useAppContext();
   const cityName = city ?? messages.common.cities.chennai;
+  const welcomeName = user?.name?.trim() || "Player";
   const heroContent = {
     ...messages.home.hero,
     badge: interpolate(messages.home.hero.badge, { city: cityName }),
@@ -31,9 +32,14 @@ export default function HomePage() {
     <RequireAuth>
       <main>
         <div className={styles.topRow}>
-          <p className={`type-body-sm ${styles.cityPill}`}>
-            {messages.common.labels.activeCity}: {cityName}
-          </p>
+          <div className={styles.infoGroup}>
+            <p className={`type-body-sm ${styles.userPill}`}>
+              {interpolate(messages.common.labels.welcomeUser, { name: welcomeName })}
+            </p>
+            <p className={`type-body-sm ${styles.cityPill}`}>
+              {messages.common.labels.activeCity}: {cityName}
+            </p>
+          </div>
           <Link href="/settings" className={`${styles.settingsLink} type-button`}>
             {messages.common.actions.settings}
           </Link>

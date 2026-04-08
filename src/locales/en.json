@@ -6,7 +6,8 @@
       "bangalore": "Bangalore"
     },
     "labels": {
-      "activeCity": "Active city"
+      "activeCity": "Active city",
+      "welcomeUser": "Hi, {{name}}"
     },
     "actions": {
       "startPlaying": "Start Playing",
