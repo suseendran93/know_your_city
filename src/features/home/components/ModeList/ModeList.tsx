@@ -7,7 +7,7 @@ type ModeListProps = {
 
 export function ModeList({ modes }: ModeListProps) {
   return (
-    <section className={styles.section}>
+    <section id="game-modes" className={styles.section}>
       <div className={styles.header}>
         <p className={`type-label ${styles.kicker}`}>Game modes</p>
         <h2 className={`type-heading-lg ${styles.title}`}>Start simple. Learn steadily.</h2>

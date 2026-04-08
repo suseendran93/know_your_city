@@ -1,0 +1,197 @@
+@use "../../../../styles/variables" as *;
+
+.screen {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: $space-xl $space-md $space-2xl;
+}
+
+.header {
+  margin-bottom: $space-lg;
+}
+
+.kicker {
+  margin: 0 0 $space-xs;
+  color: $color-secondary-strong;
+}
+
+.title {
+  margin: 0 0 $space-xs;
+  color: $color-text;
+}
+
+.subtitle {
+  margin: 0;
+  color: $color-text-muted;
+}
+
+.scoreCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-md;
+  padding: $space-sm $space-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  background-color: $color-surface;
+  box-shadow: $shadow-sm;
+}
+
+.scoreValue {
+  display: block;
+  margin-top: $space-2xs;
+}
+
+.scoreMeta {
+  text-align: right;
+}
+
+.setupGrid {
+  display: grid;
+  gap: $space-md;
+}
+
+.searchCard,
+.questionCard {
+  padding: $space-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  background-color: $color-surface;
+  box-shadow: $shadow-sm;
+}
+
+.searchLabel,
+.questionLabel {
+  display: block;
+  margin-bottom: $space-sm;
+  color: $color-primary-strong;
+}
+
+.searchRow {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.searchInput {
+  width: 100%;
+  min-height: 3rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-sm $space-md;
+  background-color: $color-surface;
+  color: $color-text;
+}
+
+.primaryButton,
+.secondaryButton,
+.answerButton {
+  min-height: 3rem;
+  border-radius: $radius-lg;
+  padding: $space-sm $space-md;
+}
+
+.primaryButton {
+  border: 0;
+  background-color: $color-primary;
+  color: $color-surface;
+}
+
+.secondaryButton {
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-primary-strong;
+}
+
+.selectedPlace,
+.statusText,
+.errorText,
+.hint,
+.feedback {
+  margin: $space-sm 0 0;
+}
+
+.selectedPlace,
+.statusText,
+.hint {
+  color: $color-text-muted;
+}
+
+.errorText {
+  color: $color-danger;
+}
+
+.resultsList {
+  display: grid;
+  gap: $space-sm;
+  margin-top: $space-sm;
+}
+
+.resultItem {
+  display: grid;
+  gap: $space-2xs;
+  width: 100%;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-sm;
+  background-color: $color-surface-strong;
+  text-align: left;
+}
+
+.resultName {
+  color: $color-text;
+}
+
+.resultAddress {
+  color: $color-text-muted;
+}
+
+.ctaRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-sm;
+  margin: $space-md 0;
+}
+
+.primaryButton:disabled {
+  background-color: $color-text-muted;
+}
+
+.questionTitle {
+  margin: 0 0 $space-md;
+  color: $color-text;
+}
+
+.answerGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-sm;
+}
+
+.nextButton {
+  width: 100%;
+  margin-top: $space-md;
+}
+
+.answerButton {
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-primary-strong;
+}
+
+.answerButtonCorrect {
+  border-color: $color-success;
+  background-color: $color-tertiary-soft;
+  color: $color-tertiary-strong;
+}
+
+.answerButtonWrong {
+  border-color: $color-danger;
+  background-color: $color-secondary-soft;
+  color: $color-danger;
+}
+
+@media (min-width: $breakpoint-md) {
+  .setupGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

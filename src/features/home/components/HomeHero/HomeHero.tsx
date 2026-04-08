@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./HomeHero.module.scss";
 
 export function HomeHero() {
@@ -10,12 +11,12 @@ export function HomeHero() {
         making the interface feel heavy.
       </p>
       <div className={styles.actions}>
-        <button type="button" className={`${styles.primaryAction} type-button`}>
+        <Link href="/direction-mode" className={`${styles.primaryAction} type-button`}>
           Start Playing
-        </button>
-        <button type="button" className={`${styles.secondaryAction} type-button`}>
+        </Link>
+        <Link href="/#game-modes" className={`${styles.secondaryAction} type-button`}>
           View Modes
-        </button>
+        </Link>
       </div>
       <div className={styles.panel}>
         <p className={`type-label ${styles.panelLabel}`}>Today&apos;s focus</p>
