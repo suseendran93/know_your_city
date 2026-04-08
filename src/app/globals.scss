@@ -1,0 +1,39 @@
+@use "../styles/variables" as *;
+@use "../styles/typography";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  min-height: 100%;
+  background-color: $color-surface-strong;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(180deg, $color-bg 0%, $color-surface-strong 100%) fixed;
+  color: $color-text;
+  font-family: $font-family-body;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}

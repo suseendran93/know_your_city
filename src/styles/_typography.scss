@@ -1,0 +1,108 @@
+@use "./variables" as *;
+
+@mixin type-style(
+  $family,
+  $size,
+  $line-height,
+  $weight,
+  $letter-spacing,
+  $transform: none
+) {
+  font-family: $family;
+  font-size: $size;
+  line-height: $line-height;
+  font-weight: $weight;
+  letter-spacing: $letter-spacing;
+  text-transform: $transform;
+}
+
+.type-display-lg {
+  @include type-style(
+    $font-family-display,
+    $font-size-3xl,
+    $line-height-tight,
+    $font-weight-bold,
+    $letter-spacing-tight
+  );
+}
+
+.type-display-md {
+  @include type-style(
+    $font-family-display,
+    $font-size-2xl,
+    $line-height-snug,
+    $font-weight-bold,
+    $letter-spacing-tight
+  );
+}
+
+.type-heading-lg {
+  @include type-style(
+    $font-family-display,
+    $font-size-xl,
+    $line-height-snug,
+    $font-weight-semibold,
+    $letter-spacing-normal
+  );
+}
+
+.type-heading-md {
+  @include type-style(
+    $font-family-display,
+    $font-size-lg,
+    $line-height-md,
+    $font-weight-semibold,
+    $letter-spacing-normal
+  );
+}
+
+.type-body-lg {
+  @include type-style(
+    $font-family-body,
+    $font-size-lg,
+    $line-height-lg,
+    $font-weight-regular,
+    $letter-spacing-normal
+  );
+}
+
+.type-body-md {
+  @include type-style(
+    $font-family-body,
+    $font-size-md,
+    $line-height-md,
+    $font-weight-regular,
+    $letter-spacing-normal
+  );
+}
+
+.type-body-sm {
+  @include type-style(
+    $font-family-body,
+    $font-size-sm,
+    $line-height-md,
+    $font-weight-regular,
+    $letter-spacing-normal
+  );
+}
+
+.type-label {
+  @include type-style(
+    $font-family-body,
+    $font-size-sm,
+    $line-height-snug,
+    $font-weight-semibold,
+    $letter-spacing-wide,
+    uppercase
+  );
+}
+
+.type-button {
+  @include type-style(
+    $font-family-body,
+    $font-size-md,
+    $line-height-snug,
+    $font-weight-semibold,
+    $letter-spacing-normal
+  );
+}

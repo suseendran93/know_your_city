@@ -1,0 +1,90 @@
+@use "../../../../styles/variables" as *;
+
+.hero {
+  padding: $space-xl $space-md $space-lg;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-2xs $space-sm;
+  border-radius: $radius-pill;
+  background-color: $color-primary-soft;
+  color: $color-primary-strong;
+  box-shadow: $shadow-sm;
+}
+
+.title {
+  margin: $space-md 0 $space-sm;
+  color: $color-text;
+}
+
+.description {
+  margin: 0 0 $space-lg;
+  color: $color-text-muted;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-sm;
+  margin-bottom: $space-lg;
+}
+
+.primaryAction,
+.secondaryAction {
+  min-height: 3rem;
+  border-radius: $radius-lg;
+  padding: $space-sm $space-md;
+  box-shadow: $shadow-sm;
+}
+
+.primaryAction {
+  border: 0;
+  background-color: $color-primary;
+  color: $color-surface;
+}
+
+.secondaryAction {
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-primary-strong;
+}
+
+.panel {
+  padding: $space-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  background-color: $color-surface;
+  box-shadow: $shadow-md;
+}
+
+.panelLabel {
+  margin: 0 0 $space-xs;
+  color: $color-secondary-strong;
+}
+
+.panelTitle {
+  margin: 0 0 $space-sm;
+  color: $color-text;
+}
+
+.panelList {
+  display: grid;
+  gap: $space-xs;
+  margin: 0;
+  padding-left: $space-md;
+  color: $color-text-muted;
+}
+
+@media (min-width: $breakpoint-md) {
+  .hero {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding-top: $space-2xl;
+  }
+
+  .actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

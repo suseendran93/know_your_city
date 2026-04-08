@@ -1,0 +1,64 @@
+@use "../../../../styles/variables" as *;
+
+.section {
+  padding: 0 $space-md $space-2xl;
+}
+
+.header {
+  margin-bottom: $space-md;
+}
+
+.kicker {
+  margin: 0 0 $space-xs;
+  color: $color-tertiary-strong;
+}
+
+.title {
+  margin: 0 0 $space-xs;
+  color: $color-text;
+}
+
+.subtitle {
+  margin: 0;
+  color: $color-text-muted;
+}
+
+.grid {
+  display: grid;
+  gap: $space-md;
+}
+
+.card {
+  padding: $space-md;
+  border-radius: $radius-xl;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-sm;
+}
+
+.status {
+  display: inline-flex;
+  margin: 0 0 $space-xs;
+  color: $color-secondary-strong;
+}
+
+.cardTitle {
+  margin: 0 0 $space-xs;
+  color: $color-primary-strong;
+}
+
+.cardDescription {
+  margin: 0;
+  color: $color-text-muted;
+}
+
+@media (min-width: $breakpoint-md) {
+  .section {
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
