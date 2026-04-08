@@ -2,6 +2,31 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { getMessages } from "@/lib/i18n";
 import { RouteModeScreen } from "./RouteModeScreen";
 
+jest.mock("@/components/providers/AppProvider/AppProvider", () => ({
+  useAppContext: () => ({
+    hydrated: true,
+    firebaseEnabled: false,
+    user: null,
+    city: "Chennai",
+    stats: {
+      totalScore: 0,
+      xp: 0,
+      streak: 0,
+      lastPlayedDate: null,
+      modeScores: {
+        directionMode: 0,
+        routeMode: 0,
+        mapPinMode: 0
+      }
+    },
+    login: jest.fn(),
+    signup: jest.fn(),
+    logout: jest.fn(),
+    setCity: jest.fn(),
+    recordGameResult: jest.fn()
+  })
+}));
+
 describe("RouteModeScreen", () => {
   const messages = getMessages();
 

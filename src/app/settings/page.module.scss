@@ -60,3 +60,21 @@
   background-color: $color-surface;
   color: $color-danger;
 }
+
+.statsCard {
+  margin-top: $space-md;
+  padding: $space-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: $color-surface-strong;
+}
+
+.statsKicker {
+  margin: 0 0 $space-xs;
+  color: $color-secondary-strong;
+}
+
+.statsItem {
+  margin: 0 0 $space-2xs;
+  color: $color-text;
+}

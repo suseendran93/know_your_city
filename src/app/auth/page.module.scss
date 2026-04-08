@@ -31,6 +31,16 @@
   color: $color-text-muted;
 }
 
+.error {
+  margin: 0 0 $space-sm;
+  color: $color-danger;
+}
+
+.notice {
+  margin: 0 0 $space-sm;
+  color: $color-success;
+}
+
 .modeRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -78,4 +88,14 @@
   border-radius: $radius-lg;
   background-color: $color-primary;
   color: $color-surface;
+}
+
+.linkButton {
+  margin-top: $space-sm;
+  border: 0;
+  background: transparent;
+  color: $color-primary-strong;
+  text-align: left;
+  padding: 0;
+  min-height: auto;
 }

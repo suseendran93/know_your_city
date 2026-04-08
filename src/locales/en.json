@@ -44,8 +44,28 @@
     "namePlaceholder": "Your name",
     "emailLabel": "Email",
     "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPasswordAction": "Forgot password?",
+    "resetSent": "Password reset email sent. Check your inbox.",
     "loginAction": "Login",
-    "signupAction": "Create account"
+    "signupAction": "Create account",
+    "firebaseMissing": "Firebase is not configured. Add Firebase environment keys to enable cloud auth and sync.",
+    "errors": {
+      "default": "Something went wrong. Please try again.",
+      "missingEmail": "Enter your email address first.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidCredential": "Invalid email or password.",
+      "wrongPassword": "Incorrect password. Please try again.",
+      "userNotFound": "No account found with this email.",
+      "emailInUse": "An account with this email already exists.",
+      "weakPassword": "Password must be at least 6 characters.",
+      "tooManyRequests": "Too many attempts. Please wait and try again.",
+      "network": "Network issue. Check your connection and try again.",
+      "configurationNotFound": "Authentication is not configured for this Firebase project. Enable Email/Password sign-in in Firebase Console.",
+      "operationNotAllowed": "This sign-in method is not enabled. Enable Email/Password in Firebase Console.",
+      "apiKeyInvalid": "Firebase API key is invalid for this project configuration."
+    }
   },
   "settings": {
     "navigationLabel": "Settings navigation",
@@ -53,7 +73,11 @@
     "title": "Game preferences",
     "subtitle": "Change city anytime. Gameplay and API requests are scoped to this city.",
     "cityLabel": "Selected city",
-    "logoutAction": "Logout"
+    "logoutAction": "Logout",
+    "statsTitle": "Progress",
+    "totalScoreLabel": "Total score",
+    "xpLabel": "XP",
+    "streakLabel": "Streak"
   },
   "home": {
     "hero": {

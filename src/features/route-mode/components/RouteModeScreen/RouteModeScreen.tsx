@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAppContext } from "@/components/providers/AppProvider/AppProvider";
 import type { PlaceResult } from "@/types/location";
 import { interpolate } from "@/lib/i18n";
 import {
@@ -77,6 +78,7 @@ async function searchPlaces(query: string, cityName: string): Promise<PlaceResul
 }
 
 export function RouteModeScreen({ cityName, content, actions, status }: RouteModeScreenProps) {
+  const { recordGameResult } = useAppContext();
   const [fromSearch, setFromSearch] = useState<SearchState>(initialSearchState);
   const [toSearch, setToSearch] = useState<SearchState>(initialSearchState);
   const [selectedFrom, setSelectedFrom] = useState<PlaceResult | null>(null);
@@ -85,9 +87,20 @@ export function RouteModeScreen({ cityName, content, actions, status }: RouteMod
   const [selectedConnectorIds, setSelectedConnectorIds] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [resultCommitted, setResultCommitted] = useState(false);
 
   const canGenerate = Boolean(selectedFrom && selectedTo && selectedFrom.id !== selectedTo.id);
   const selectedCount = selectedConnectorIds.length;
+
+  useEffect(() => {
+    if (!submitted || resultCommitted || !challenge) {
+      return;
+    }
+
+    const score = getRouteScore(challenge, selectedConnectorIds);
+    setResultCommitted(true);
+    void recordGameResult("routeMode", score);
+  }, [challenge, recordGameResult, resultCommitted, selectedConnectorIds, submitted]);
 
   useDebouncedSearch(
     fromSearch.query,
@@ -156,6 +169,7 @@ export function RouteModeScreen({ cityName, content, actions, status }: RouteMod
     setChallenge(getRouteConnectorChallenge(selectedFrom, selectedTo, cityName));
     setSelectedConnectorIds([]);
     setSubmitted(false);
+    setResultCommitted(false);
     setErrorMessage("");
   }
 
@@ -199,6 +213,7 @@ export function RouteModeScreen({ cityName, content, actions, status }: RouteMod
     setChallenge(null);
     setSelectedConnectorIds([]);
     setSubmitted(false);
+    setResultCommitted(false);
     setErrorMessage("");
   }
 
@@ -351,6 +366,11 @@ function getFeedbackMessage(
   }
 
   return gameContent.answerWrong;
+}
+
+function getRouteScore(challenge: RouteConnectorChallenge, selectedConnectorIds: string[]) {
+  const expectedIds = challenge.expectedConnectors.map((connector) => connector.id);
+  return selectedConnectorIds.filter((connectorId) => expectedIds.includes(connectorId)).length;
 }
 
 function useDebouncedSearch(

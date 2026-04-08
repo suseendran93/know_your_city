@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAppContext } from "@/components/providers/AppProvider/AppProvider";
 import { getPrimaryDirection, type DirectionAnswer } from "@/lib/game/getPrimaryDirection";
 import { interpolate } from "@/lib/i18n";
 import type { NearbyPlaceResult, PlaceResult } from "@/types/location";
@@ -155,6 +156,7 @@ type DirectionModeScreenProps = {
 };
 
 export function DirectionModeScreen({ cityName, content, actions, status }: DirectionModeScreenProps) {
+  const { recordGameResult } = useAppContext();
   const [fromSearch, setFromSearch] = useState<SearchState>(initialSearchState);
   const [toSearch, setToSearch] = useState<SearchState>(initialSearchState);
   const [selectedFrom, setSelectedFrom] = useState<PlaceResult | null>(null);
@@ -166,10 +168,20 @@ export function DirectionModeScreen({ cityName, content, actions, status }: Dire
   const [hasAnswered, setHasAnswered] = useState(false);
   const [roundLoading, setRoundLoading] = useState(false);
   const [roundError, setRoundError] = useState("");
+  const [resultCommitted, setResultCommitted] = useState(false);
 
   const currentQuestion = questions[currentQuestionIndex] ?? null;
   const isRoundComplete = questions.length > 0 && currentQuestionIndex >= questions.length;
   const canStart = Boolean(selectedFrom && selectedTo && selectedFrom.id !== selectedTo.id && !roundLoading);
+
+  useEffect(() => {
+    if (!isRoundComplete || resultCommitted) {
+      return;
+    }
+
+    setResultCommitted(true);
+    void recordGameResult("directionMode", score);
+  }, [isRoundComplete, recordGameResult, resultCommitted, score]);
 
   useDebouncedSearch(
     fromSearch.query,
@@ -244,6 +256,7 @@ export function DirectionModeScreen({ cityName, content, actions, status }: Dire
 
     setRoundLoading(true);
     setRoundError("");
+    setResultCommitted(false);
     setQuestions([]);
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
@@ -334,6 +347,7 @@ export function DirectionModeScreen({ cityName, content, actions, status }: Dire
     setScore(0);
     setRoundLoading(false);
     setRoundError("");
+    setResultCommitted(false);
     setSelectedFrom(null);
     setSelectedTo(null);
     setFromSearch(initialSearchState);

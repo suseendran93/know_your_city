@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useAppContext } from "@/components/providers/AppProvider/AppProvider";
 import { interpolate } from "@/lib/i18n";
 import type { PlaceResult } from "@/types/location";
 import styles from "./MapPinModeScreen.module.scss";
@@ -147,6 +148,7 @@ async function fetchCityPlaces(cityName: string): Promise<PlaceResult[]> {
 }
 
 export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScreenProps) {
+  const { recordGameResult } = useAppContext();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const leafletRef = useRef<LeafletModule | null>(null);
@@ -161,11 +163,21 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
   const [loadingRound, setLoadingRound] = useState(false);
+  const [resultCommitted, setResultCommitted] = useState(false);
 
   const cityConfig = getCityConfig(cityName);
   const currentQuestion = questions[currentQuestionIndex] ?? null;
   const isRoundActive = questions.length > 0 && currentQuestionIndex < questions.length;
   const isRoundComplete = questions.length > 0 && currentQuestionIndex >= questions.length;
+
+  useEffect(() => {
+    if (!isRoundComplete || resultCommitted) {
+      return;
+    }
+
+    setResultCommitted(true);
+    void recordGameResult("mapPinMode", score);
+  }, [isRoundComplete, recordGameResult, resultCommitted, score]);
 
   useEffect(() => {
     submittedRef.current = hasSubmitted;
@@ -316,6 +328,7 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
     setScore(0);
     setCurrentQuestionIndex(0);
     setQuestions([]);
+    setResultCommitted(false);
 
     try {
       const places = await fetchCityPlaces(cityName);
@@ -341,6 +354,7 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
     setScore(0);
     setFeedback("");
     setError("");
+    setResultCommitted(false);
   }
 
   function submitPin() {

@@ -9,7 +9,7 @@ import styles from "./page.module.scss";
 
 export default function SettingsPage() {
   const messages = getMessages();
-  const { city, setCity, logout } = useAppContext();
+  const { city, stats, setCity, logout } = useAppContext();
 
   return (
     <RequireAuth>
@@ -42,6 +42,19 @@ export default function SettingsPage() {
           <button type="button" className={`${styles.logoutButton} type-button`} onClick={logout}>
             {messages.settings.logoutAction}
           </button>
+
+          <div className={styles.statsCard}>
+            <p className={`type-label ${styles.statsKicker}`}>{messages.settings.statsTitle}</p>
+            <p className={`type-body-md ${styles.statsItem}`}>
+              {messages.settings.totalScoreLabel}: {stats.totalScore}
+            </p>
+            <p className={`type-body-md ${styles.statsItem}`}>
+              {messages.settings.xpLabel}: {stats.xp}
+            </p>
+            <p className={`type-body-md ${styles.statsItem}`}>
+              {messages.settings.streakLabel}: {stats.streak}
+            </p>
+          </div>
         </section>
       </main>
     </RequireAuth>

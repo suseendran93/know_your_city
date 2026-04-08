@@ -4,9 +4,25 @@ import { CitySelectionModal } from "./CitySelectionModal";
 jest.mock("@/components/providers/AppProvider/AppProvider", () => ({
   useAppContext: () => ({
     hydrated: true,
+    firebaseEnabled: true,
     user: { name: "Test User", email: "test@example.com" },
     city: null,
-    setCity: jest.fn()
+    stats: {
+      totalScore: 0,
+      xp: 0,
+      streak: 0,
+      lastPlayedDate: null,
+      modeScores: {
+        directionMode: 0,
+        routeMode: 0,
+        mapPinMode: 0
+      }
+    },
+    login: jest.fn(),
+    signup: jest.fn(),
+    logout: jest.fn(),
+    setCity: jest.fn(),
+    recordGameResult: jest.fn()
   })
 }));
 
