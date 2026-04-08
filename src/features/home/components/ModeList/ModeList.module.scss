@@ -52,6 +52,24 @@
   color: $color-text-muted;
 }
 
+.modeLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  margin-top: $space-sm;
+  border-radius: $radius-lg;
+  border: 0;
+  background-color: $color-primary;
+  color: $color-surface;
+  padding: $space-xs $space-md;
+}
+
+.comingSoon {
+  margin: $space-sm 0 0;
+  color: $color-text-muted;
+}
+
 @media (min-width: $breakpoint-md) {
   .section {
     max-width: 48rem;

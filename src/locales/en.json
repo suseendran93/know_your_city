@@ -10,7 +10,10 @@
       "nextQuestion": "Next Question",
       "finishRound": "Finish Round",
       "startFiveQuestions": "Start 5 Questions",
-      "buildingRound": "Building Round..."
+      "buildingRound": "Building Round...",
+      "submitAnswer": "Submit Connectors",
+      "newChallenge": "New Challenge",
+      "generateChallenge": "Build Route Challenge"
     },
     "status": {
       "searching": "Searching..."
@@ -33,11 +36,22 @@
       "kicker": "Game modes",
       "title": "Start simple. Learn steadily.",
       "subtitle": "The first version focuses on short sessions, clear questions, and touch-friendly actions.",
+      "cta": {
+        "openMode": "Open Mode",
+        "comingSoon": "Coming soon"
+      },
       "items": [
         {
           "title": "Direction Mode",
           "description": "Guess whether a place sits north, south, east, or west from another Chennai location.",
-          "status": "Ready for MVP"
+          "status": "Ready for MVP",
+          "path": "/direction-mode"
+        },
+        {
+          "title": "Route Mode",
+          "description": "Choose 2 to 3 connector roads to build a practical path from source to destination.",
+          "status": "Ready for MVP",
+          "path": "/route-mode"
         },
         {
           "title": "Map Pin Mode",
@@ -88,6 +102,37 @@
       "searchFailed": "Failed to search places.",
       "nearbyFailed": "Nearby place service timed out. Please try again with a larger landmark or city area.",
       "roundFailed": "Failed to create the question set."
+    }
+  },
+  "routeMode": {
+    "navigation": {
+      "label": "Route mode navigation"
+    },
+    "header": {
+      "kicker": "Route mode",
+      "title": "Build a connector path between two places.",
+      "subtitle": "Select source and destination, then choose 2 or 3 connector routes that best fit the trip."
+    },
+    "search": {
+      "fromLabel": "From place",
+      "toLabel": "To place",
+      "placeholder": "Search a city, area, or landmark",
+      "selectedPrefix": "Selected:",
+      "noResults": "No places found."
+    },
+    "game": {
+      "instruction": "Pick 2-3 connectors for {{from}} to {{to}}.",
+      "challengeTitle": "Connector challenge",
+      "submitHint": "Choose exactly 2 or 3 connectors before submitting.",
+      "selectedCount": "Selected: {{count}}",
+      "answerCorrect": "Perfect. Your connector set matches the expected route logic.",
+      "answerPartial": "Good try. You got {{count}} out of {{total}} expected connectors.",
+      "answerWrong": "Not quite. None of your selections matched the expected connectors.",
+      "expectedLabel": "Expected connectors:"
+    },
+    "errors": {
+      "searchFailed": "Failed to search places.",
+      "invalidSelection": "Select 2 or 3 connectors before submitting."
     }
   }
 }

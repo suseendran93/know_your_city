@@ -54,6 +54,13 @@ For a component named `LocationCard`:
 - Favor small, colocated components over deeply nested abstractions.
 - Start with static/local data before adding backend complexity.
 
+## Game Mode Rules
+- `Direction mode`: ask directional questions using distinct source and destination places only.
+- `Route mode`: user must select a source and destination, then choose 2 to 3 connector routes.
+- Route-mode scoring should explain whether the selection is perfect, partial, or incorrect.
+- Route-mode option sets should include plausible connectors plus distractors, not only obvious correct answers.
+- Avoid generating route questions where source and destination are effectively the same place.
+
 ## Folder Responsibilities
 
 ### `public/`

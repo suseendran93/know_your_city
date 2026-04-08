@@ -1,0 +1,180 @@
+@use "../../../../styles/variables" as *;
+
+.screen {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: $space-xl $space-md $space-2xl;
+}
+
+.header {
+  margin-bottom: $space-lg;
+}
+
+.kicker {
+  margin: 0 0 $space-xs;
+  color: $color-secondary-strong;
+}
+
+.title {
+  margin: 0 0 $space-xs;
+  color: $color-text;
+}
+
+.subtitle {
+  margin: 0;
+  color: $color-text-muted;
+}
+
+.setupGrid {
+  display: grid;
+  gap: $space-md;
+}
+
+.searchCard,
+.challengeCard {
+  padding: $space-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  background-color: $color-surface;
+  box-shadow: $shadow-sm;
+}
+
+.searchLabel {
+  display: block;
+  margin-bottom: $space-sm;
+  color: $color-primary-strong;
+}
+
+.searchInput {
+  width: 100%;
+  min-height: 3rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-sm $space-md;
+  background-color: $color-surface;
+  color: $color-text;
+}
+
+.selectedPlace,
+.statusText,
+.errorText,
+.hint,
+.countText,
+.feedback,
+.expectedText {
+  margin: $space-sm 0 0;
+}
+
+.selectedPlace,
+.statusText,
+.hint,
+.countText {
+  color: $color-text-muted;
+}
+
+.errorText {
+  color: $color-danger;
+}
+
+.resultsList {
+  display: grid;
+  gap: $space-sm;
+  margin-top: $space-sm;
+}
+
+.resultItem {
+  display: grid;
+  gap: $space-2xs;
+  width: 100%;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-sm;
+  background-color: $color-surface-strong;
+  text-align: left;
+}
+
+.resultName {
+  color: $color-text;
+}
+
+.resultAddress {
+  color: $color-text-muted;
+}
+
+.ctaRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-sm;
+  margin: $space-md 0;
+}
+
+.primaryButton,
+.secondaryButton,
+.connectorButton {
+  min-height: 3rem;
+  border-radius: $radius-lg;
+  padding: $space-sm $space-md;
+}
+
+.primaryButton {
+  border: 0;
+  background-color: $color-primary;
+  color: $color-surface;
+}
+
+.secondaryButton {
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-primary-strong;
+}
+
+.challengeKicker {
+  margin: 0 0 $space-xs;
+  color: $color-tertiary-strong;
+}
+
+.challengeTitle {
+  margin: 0;
+  color: $color-text;
+}
+
+.connectorGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-sm;
+  margin-top: $space-md;
+}
+
+.connectorButton {
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-primary-strong;
+}
+
+.connectorButtonSelected {
+  border-color: $color-primary;
+  background-color: $color-primary-soft;
+}
+
+.connectorButtonCorrect {
+  border-color: $color-success;
+  background-color: $color-tertiary-soft;
+  color: $color-tertiary-strong;
+}
+
+.connectorButtonWrong {
+  border-color: $color-danger;
+  background-color: $color-secondary-soft;
+  color: $color-danger;
+}
+
+.nextButton {
+  width: 100%;
+  margin-top: $space-md;
+}
+
+@media (min-width: $breakpoint-md) {
+  .setupGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

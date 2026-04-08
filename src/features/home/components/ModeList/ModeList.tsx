@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./ModeList.module.scss";
 
 type ModeListProps = {
@@ -5,10 +6,15 @@ type ModeListProps = {
     kicker: string;
     title: string;
     subtitle: string;
+    cta: {
+      openMode: string;
+      comingSoon: string;
+    };
     items: Array<{
       title: string;
       description: string;
       status: string;
+      path?: string;
     }>;
   };
 };
@@ -30,6 +36,13 @@ export function ModeList({ content }: ModeListProps) {
             <p className={`type-label ${styles.status}`}>{mode.status}</p>
             <h3 className={`type-heading-md ${styles.cardTitle}`}>{mode.title}</h3>
             <p className={`type-body-sm ${styles.cardDescription}`}>{mode.description}</p>
+            {mode.path ? (
+              <Link href={mode.path} className={`${styles.modeLink} type-button`}>
+                {content.cta.openMode}
+              </Link>
+            ) : (
+              <p className={`type-body-sm ${styles.comingSoon}`}>{content.cta.comingSoon}</p>
+            )}
           </article>
         ))}
       </div>
