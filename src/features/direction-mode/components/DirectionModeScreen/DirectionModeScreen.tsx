@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getPrimaryDirection, type DirectionAnswer } from "@/lib/game/getPrimaryDirection";
+import { interpolate } from "@/lib/i18n";
 import type { NearbyPlaceResult, PlaceResult } from "@/types/location";
 import styles from "./DirectionModeScreen.module.scss";
 
@@ -74,7 +75,55 @@ function normalizePlaceName(name: string) {
   return name.trim().toLowerCase();
 }
 
-export function DirectionModeScreen() {
+type DirectionModeScreenProps = {
+  content: {
+    header: {
+      kicker: string;
+      title: string;
+      subtitle: string;
+    };
+    score: {
+      label: string;
+      roundLabel: string;
+      roundComplete: string;
+      roundCompleteTitle: string;
+      roundCompleteDescription: string;
+    };
+    search: {
+      fromLabel: string;
+      toLabel: string;
+      placeholder: string;
+      emptyError: string;
+      noResults: string;
+      selectedPrefix: string;
+    };
+    question: {
+      label: string;
+      title: string;
+      hint: string;
+      correct: string;
+      wrong: string;
+    };
+    errors: {
+      roundBuild: string;
+      searchFailed: string;
+      nearbyFailed: string;
+      roundFailed: string;
+    };
+  };
+  actions: {
+    reset: string;
+    nextQuestion: string;
+    finishRound: string;
+    startFiveQuestions: string;
+    buildingRound: string;
+  };
+  status: {
+    searching: string;
+  };
+};
+
+export function DirectionModeScreen({ content, actions, status }: DirectionModeScreenProps) {
   const [fromSearch, setFromSearch] = useState<SearchState>(initialSearchState);
   const [toSearch, setToSearch] = useState<SearchState>(initialSearchState);
   const [selectedFrom, setSelectedFrom] = useState<PlaceResult | null>(null);
@@ -91,8 +140,20 @@ export function DirectionModeScreen() {
   const isRoundComplete = questions.length > 0 && currentQuestionIndex >= questions.length;
   const canStart = Boolean(selectedFrom && selectedTo && selectedFrom.id !== selectedTo.id && !roundLoading);
 
-  useDebouncedSearch(fromSearch.query, selectedFrom, setFromSearch);
-  useDebouncedSearch(toSearch.query, selectedTo, setToSearch);
+  useDebouncedSearch(
+    fromSearch.query,
+    selectedFrom,
+    content.search.noResults,
+    content.errors.searchFailed,
+    setFromSearch
+  );
+  useDebouncedSearch(
+    toSearch.query,
+    selectedTo,
+    content.search.noResults,
+    content.errors.searchFailed,
+    setToSearch
+  );
 
   function updateQuery(side: "from" | "to", query: string) {
     const nextState = {
@@ -173,14 +234,14 @@ export function DirectionModeScreen() {
       const nextQuestions = buildRoundQuestions(selectedFrom, selectedTo, normalizedNearbyPlaces);
 
       if (nextQuestions.length < roundSize) {
-        setRoundError("Could not build 5 questions for this place yet. Try a bigger area or landmark.");
+        setRoundError(content.errors.roundBuild);
         setRoundLoading(false);
         return;
       }
 
       setQuestions(nextQuestions);
     } catch (error) {
-      setRoundError(error instanceof Error ? error.message : "Failed to create the question set.");
+      setRoundError(error instanceof Error ? error.message : content.errors.roundFailed);
     } finally {
       setRoundLoading(false);
     }
@@ -228,21 +289,18 @@ export function DirectionModeScreen() {
   return (
     <section className={styles.screen}>
       <div className={styles.header}>
-        <p className={`type-label ${styles.kicker}`}>Direction mode</p>
-        <h1 className={`type-heading-lg ${styles.title}`}>Pick two real places and play five quick questions.</h1>
-        <p className={`type-body-md ${styles.subtitle}`}>
-          Search starts while you type. The app uses live free place data, then builds a short
-          direction round from the selected area.
-        </p>
+        <p className={`type-label ${styles.kicker}`}>{content.header.kicker}</p>
+        <h1 className={`type-heading-lg ${styles.title}`}>{content.header.title}</h1>
+        <p className={`type-body-md ${styles.subtitle}`}>{content.header.subtitle}</p>
       </div>
 
       <div className={styles.scoreCard}>
         <div>
-          <span className="type-label">Score</span>
+          <span className="type-label">{content.score.label}</span>
           <strong className={`type-heading-md ${styles.scoreValue}`}>{score}</strong>
         </div>
         <div className={styles.scoreMeta}>
-          <span className="type-label">Round</span>
+          <span className="type-label">{content.score.roundLabel}</span>
           <strong className="type-heading-md">
             {questions.length === 0 ? 0 : Math.min(currentQuestionIndex + 1, questions.length)} / {questions.length || roundSize}
           </strong>
@@ -251,22 +309,28 @@ export function DirectionModeScreen() {
 
       <div className={styles.setupGrid}>
         <PlaceSearchCard
-          title="From place"
+          title={content.search.fromLabel}
           value={fromSearch.query}
           loading={fromSearch.loading}
           error={fromSearch.error}
           results={fromSearch.results}
           selectedPlace={selectedFrom}
+          placeholder={content.search.placeholder}
+          selectedPrefix={content.search.selectedPrefix}
+          searchingLabel={status.searching}
           onChange={(query) => updateQuery("from", query)}
           onSelect={(place) => selectPlace("from", place)}
         />
         <PlaceSearchCard
-          title="To place"
+          title={content.search.toLabel}
           value={toSearch.query}
           loading={toSearch.loading}
           error={toSearch.error}
           results={toSearch.results}
           selectedPlace={selectedTo}
+          placeholder={content.search.placeholder}
+          selectedPrefix={content.search.selectedPrefix}
+          searchingLabel={status.searching}
           onChange={(query) => updateQuery("to", query)}
           onSelect={(place) => selectPlace("to", place)}
         />
@@ -279,10 +343,10 @@ export function DirectionModeScreen() {
           disabled={!canStart}
           onClick={startRound}
         >
-          {roundLoading ? "Building Round..." : "Start 5 Questions"}
+          {roundLoading ? actions.buildingRound : actions.startFiveQuestions}
         </button>
         <button type="button" className={`${styles.secondaryButton} type-button`} onClick={resetRound}>
-          Reset
+          {actions.reset}
         </button>
       </div>
 
@@ -290,9 +354,14 @@ export function DirectionModeScreen() {
 
       {currentQuestion ? (
         <div className={styles.questionCard}>
-          <p className={`type-label ${styles.questionLabel}`}>Question {currentQuestionIndex + 1}</p>
+          <p className={`type-label ${styles.questionLabel}`}>
+            {interpolate(content.question.label, { index: currentQuestionIndex + 1 })}
+          </p>
           <h2 className={`type-heading-md ${styles.questionTitle}`}>
-            Where is {currentQuestion.to.name} from {currentQuestion.from.name}?
+            {interpolate(content.question.title, {
+              to: currentQuestion.to.name,
+              from: currentQuestion.from.name
+            })}
           </h2>
 
           <div className={styles.answerGrid}>
@@ -323,30 +392,36 @@ export function DirectionModeScreen() {
             <>
               <p className={`type-body-md ${styles.feedback}`}>
                 {selectedAnswer === currentQuestion.answer
-                  ? `Correct. ${currentQuestion.to.name} is ${currentQuestion.answer.toLowerCase()} of ${currentQuestion.from.name}.`
-                  : `Not quite. The best answer is ${currentQuestion.answer}.`}
+                  ? interpolate(content.question.correct, {
+                      to: currentQuestion.to.name,
+                      from: currentQuestion.from.name,
+                      answer: currentQuestion.answer.toLowerCase()
+                    })
+                  : interpolate(content.question.wrong, {
+                      answer: currentQuestion.answer
+                    })}
               </p>
               <button
                 type="button"
                 className={`${styles.primaryButton} ${styles.nextButton} type-button`}
                 onClick={goToNextQuestion}
               >
-                {currentQuestionIndex === questions.length - 1 ? "Finish Round" : "Next Question"}
+                {currentQuestionIndex === questions.length - 1 ? actions.finishRound : actions.nextQuestion}
               </button>
             </>
           ) : (
-            <p className={`type-body-sm ${styles.hint}`}>Choose the strongest direction based on the coordinates.</p>
+            <p className={`type-body-sm ${styles.hint}`}>{content.question.hint}</p>
           )}
         </div>
       ) : null}
 
       {isRoundComplete ? (
         <div className={styles.questionCard}>
-          <p className={`type-label ${styles.questionLabel}`}>Round complete</p>
-          <h2 className={`type-heading-md ${styles.questionTitle}`}>You scored {score} out of {questions.length}.</h2>
-          <p className={`type-body-md ${styles.feedback}`}>
-            Keep the same places and start again, or reset and try a different pair.
-          </p>
+          <p className={`type-label ${styles.questionLabel}`}>{content.score.roundComplete}</p>
+          <h2 className={`type-heading-md ${styles.questionTitle}`}>
+            {interpolate(content.score.roundCompleteTitle, { score, total: questions.length })}
+          </h2>
+          <p className={`type-body-md ${styles.feedback}`}>{content.score.roundCompleteDescription}</p>
         </div>
       ) : null}
     </section>
@@ -356,6 +431,8 @@ export function DirectionModeScreen() {
 function useDebouncedSearch(
   query: string,
   selectedPlace: PlaceResult | null,
+  noResultsLabel: string,
+  searchFailedLabel: string,
   setState: (value: SearchState | ((previousState: SearchState) => SearchState)) => void
 ) {
   useEffect(() => {
@@ -394,7 +471,7 @@ function useDebouncedSearch(
             ...previousState,
             results: places,
             loading: false,
-            error: places.length === 0 ? "No places found." : ""
+            error: places.length === 0 ? noResultsLabel : ""
           };
         });
       } catch (error) {
@@ -407,14 +484,14 @@ function useDebouncedSearch(
             ...previousState,
             results: [],
             loading: false,
-            error: error instanceof Error ? error.message : "Failed to search places."
+            error: error instanceof Error ? error.message : searchFailedLabel
           };
         });
       }
     }, 350);
 
     return () => window.clearTimeout(timeoutId);
-  }, [query, selectedPlace, setState]);
+  }, [noResultsLabel, query, searchFailedLabel, selectedPlace, setState]);
 }
 
 type PlaceSearchCardProps = {
@@ -424,6 +501,9 @@ type PlaceSearchCardProps = {
   error: string;
   results: PlaceResult[];
   selectedPlace: PlaceResult | null;
+  placeholder: string;
+  selectedPrefix: string;
+  searchingLabel: string;
   onChange: (query: string) => void;
   onSelect: (place: PlaceResult) => void;
 };
@@ -435,6 +515,9 @@ function PlaceSearchCard({
   error,
   results,
   selectedPlace,
+  placeholder,
+  selectedPrefix,
+  searchingLabel,
   onChange,
   onSelect
 }: PlaceSearchCardProps) {
@@ -446,16 +529,18 @@ function PlaceSearchCard({
           className={`type-body-md ${styles.searchInput}`}
           type="text"
           value={value}
-          placeholder="Search a city, area, or landmark"
+          placeholder={placeholder}
           onChange={(event) => onChange(event.target.value)}
         />
       </div>
 
       {selectedPlace ? (
-        <p className={`type-body-sm ${styles.selectedPlace}`}>{selectedPlace.fullAddress}</p>
+        <p className={`type-body-sm ${styles.selectedPlace}`}>
+          {selectedPrefix} {selectedPlace.fullAddress}
+        </p>
       ) : null}
 
-      {loading ? <p className={`type-body-sm ${styles.statusText}`}>Searching...</p> : null}
+      {loading ? <p className={`type-body-sm ${styles.statusText}`}>{searchingLabel}</p> : null}
       {error ? <p className={`type-body-sm ${styles.errorText}`}>{error}</p> : null}
 
       {results.length > 0 ? (

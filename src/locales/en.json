@@ -1,0 +1,93 @@
+{
+  "common": {
+    "appName": "Know Your Chennai",
+    "actions": {
+      "startPlaying": "Start Playing",
+      "viewModes": "View Modes",
+      "reset": "Reset",
+      "home": "Home",
+      "back": "Back",
+      "nextQuestion": "Next Question",
+      "finishRound": "Finish Round",
+      "startFiveQuestions": "Start 5 Questions",
+      "buildingRound": "Building Round..."
+    },
+    "status": {
+      "searching": "Searching..."
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Know Your Chennai",
+      "title": "Learn Chennai like a local.",
+      "description": "A simple mobile-first game to practice directions, neighborhoods, and city memory without making the interface feel heavy.",
+      "panelLabel": "Today's focus",
+      "panelTitle": "3 quick ways to learn the city",
+      "panelItems": [
+        "Guess directions between real Chennai areas",
+        "Tap the right place on the map",
+        "Build a daily streak in small sessions"
+      ]
+    },
+    "modes": {
+      "kicker": "Game modes",
+      "title": "Start simple. Learn steadily.",
+      "subtitle": "The first version focuses on short sessions, clear questions, and touch-friendly actions.",
+      "items": [
+        {
+          "title": "Direction Mode",
+          "description": "Guess whether a place sits north, south, east, or west from another Chennai location.",
+          "status": "Ready for MVP"
+        },
+        {
+          "title": "Map Pin Mode",
+          "description": "Tap the correct spot on the map to build stronger memory of Chennai neighborhoods.",
+          "status": "Ready for MVP"
+        },
+        {
+          "title": "Daily Challenge",
+          "description": "Play five quick questions a day and keep a local streak going on your phone.",
+          "status": "Next step"
+        }
+      ]
+    }
+  },
+  "directionMode": {
+    "navigation": {
+      "label": "Direction mode navigation"
+    },
+    "header": {
+      "kicker": "Direction mode",
+      "title": "Pick two real places and play five quick questions.",
+      "subtitle": "Search starts while you type. The app uses live free place data, then builds a short direction round from the selected area."
+    },
+    "score": {
+      "label": "Score",
+      "roundLabel": "Round",
+      "roundComplete": "Round complete",
+      "roundCompleteTitle": "You scored {{score}} out of {{total}}.",
+      "roundCompleteDescription": "Keep the same places and start again, or reset and try a different pair."
+    },
+    "search": {
+      "fromLabel": "From place",
+      "toLabel": "To place",
+      "placeholder": "Search a city, area, or landmark",
+      "emptyError": "Enter at least 2 characters.",
+      "noResults": "No places found.",
+      "selectedPrefix": "Selected:"
+    },
+    "question": {
+      "label": "Question {{index}}",
+      "title": "Where is {{to}} from {{from}}?",
+      "hint": "Choose the strongest direction based on the coordinates.",
+      "correct": "Correct. {{to}} is {{answer}} of {{from}}.",
+      "wrong": "Not quite. The best answer is {{answer}}."
+    },
+    "errors": {
+      "roundBuild": "Could not build 5 questions for this place yet. Try a bigger area or landmark.",
+      "searchFailed": "Failed to search places.",
+      "nearbyFailed": "Failed to fetch nearby places.",
+      "roundFailed": "Failed to create the question set."
+    }
+  }
+}

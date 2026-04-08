@@ -1,0 +1,28 @@
+@use "../../../styles/variables" as *;
+
+.navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-sm;
+  margin-bottom: $space-md;
+}
+
+.backButton,
+.homeLink {
+  min-height: 2.75rem;
+  border-radius: $radius-lg;
+  padding: $space-sm $space-md;
+}
+
+.backButton {
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-primary-strong;
+}
+
+.homeLink {
+  border: 0;
+  background-color: $color-primary;
+  color: $color-surface;
+}

@@ -8,6 +8,16 @@ These rules apply to this repository unless the user explicitly overrides them.
 - Every `.tsx` component file should have its own paired SCSS file.
 - Every `.tsx` component file should have its own paired test file.
 - Prefer colocated files for clarity.
+- Do not hardcode user-facing UI copy inside components when it belongs to app content.
+- Store user-facing UI copy in locale JSON files and access it through the shared i18n helper.
+
+## Internationalization Rules
+- Store translatable text in locale JSON files under `src/locales/`.
+- Use the shared helper in `src/lib/i18n.ts` to read messages and interpolate dynamic values.
+- Prefer passing translated content into components as props instead of importing locale JSON directly inside many leaf components.
+- Keep validation messages, labels, button text, headings, empty states, and helper text in locale files.
+- Avoid hardcoded English strings in app UI unless they are temporary debugging text.
+- If new UI is added, update the locale JSON in the same change.
 
 ### Component File Pattern
 For a component named `LocationCard`:
@@ -91,6 +101,11 @@ For a component named `LocationCard`:
 - Shared typography utilities and classes belong in `src/styles/_typography.scss`.
 - Global app styles, resets, and base element styles should live in app-level stylesheet files such as `globals.scss`.
 - Component-specific styles must not be placed here; keep them next to the component.
+
+### `src/locales/`
+- Store locale JSON files for app content and translatable UI strings.
+- Keep keys grouped by page, feature, or shared domain such as `common`, `home`, or `directionMode`.
+- Prefer stable, descriptive keys over positional or ambiguous names.
 
 ### `src/types/`
 - Store shared TypeScript types, interfaces, and domain models.

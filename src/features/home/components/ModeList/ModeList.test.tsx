@@ -5,18 +5,23 @@ describe("ModeList", () => {
   it("renders the provided game modes", () => {
     render(
       <ModeList
-        modes={[
-          {
-            title: "Direction Mode",
-            description: "Guess the city direction between two places.",
-            status: "Ready"
-          },
-          {
-            title: "Map Pin Mode",
-            description: "Tap the right location on the map.",
-            status: "Next"
-          }
-        ]}
+        content={{
+          kicker: "Game modes",
+          title: "Start simple. Learn steadily.",
+          subtitle: "Subtitle",
+          items: [
+            {
+              title: "Direction Mode",
+              description: "Guess the city direction between two places.",
+              status: "Ready"
+            },
+            {
+              title: "Map Pin Mode",
+              description: "Tap the right location on the map.",
+              status: "Next"
+            }
+          ]
+        }}
       />
     );
 

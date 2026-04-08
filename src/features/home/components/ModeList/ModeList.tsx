@@ -1,23 +1,31 @@
-import type { HomeMode } from "@/types/home";
 import styles from "./ModeList.module.scss";
 
 type ModeListProps = {
-  modes: HomeMode[];
+  content: {
+    kicker: string;
+    title: string;
+    subtitle: string;
+    items: Array<{
+      title: string;
+      description: string;
+      status: string;
+    }>;
+  };
 };
 
-export function ModeList({ modes }: ModeListProps) {
+export function ModeList({ content }: ModeListProps) {
   return (
     <section id="game-modes" className={styles.section}>
       <div className={styles.header}>
-        <p className={`type-label ${styles.kicker}`}>Game modes</p>
-        <h2 className={`type-heading-lg ${styles.title}`}>Start simple. Learn steadily.</h2>
+        <p className={`type-label ${styles.kicker}`}>{content.kicker}</p>
+        <h2 className={`type-heading-lg ${styles.title}`}>{content.title}</h2>
         <p className={`type-body-md ${styles.subtitle}`}>
-          The first version focuses on short sessions, clear questions, and touch-friendly actions.
+          {content.subtitle}
         </p>
       </div>
 
       <div className={styles.grid}>
-        {modes.map((mode) => (
+        {content.items.map((mode) => (
           <article key={mode.title} className={styles.card}>
             <p className={`type-label ${styles.status}`}>{mode.status}</p>
             <h3 className={`type-heading-md ${styles.cardTitle}`}>{mode.title}</h3>
