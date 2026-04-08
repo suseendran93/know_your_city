@@ -8,12 +8,10 @@ type ModeListProps = {
     subtitle: string;
     cta: {
       openMode: string;
-      comingSoon: string;
     };
     items: Array<{
       title: string;
       description: string;
-      status: string;
       path?: string;
     }>;
   };
@@ -33,7 +31,6 @@ export function ModeList({ content }: ModeListProps) {
       <div className={styles.grid}>
         {content.items.map((mode) => (
           <article key={mode.title} className={styles.card}>
-            <p className={`type-label ${styles.status}`}>{mode.status}</p>
             <h3 className={`type-heading-md ${styles.cardTitle}`}>{mode.title}</h3>
             <p className={`type-body-sm ${styles.cardDescription}`}>{mode.description}</p>
             {mode.path ? (
@@ -41,7 +38,7 @@ export function ModeList({ content }: ModeListProps) {
                 {content.cta.openMode}
               </Link>
             ) : (
-              <p className={`type-body-sm ${styles.comingSoon}`}>{content.cta.comingSoon}</p>
+              <span className={styles.noAction} />
             )}
           </article>
         ))}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CitySelectionModal } from "@/components/layout/CitySelectionModal/CitySelectionModal";
 import { AppProvider } from "@/components/providers/AppProvider/AppProvider";
 import { getMessages } from "@/lib/i18n";
+import "leaflet/dist/leaflet.css";
 import "./globals.scss";
 
 export const metadata: Metadata = {

@@ -1,0 +1,107 @@
+@use "../../../../styles/variables" as *;
+
+.screen {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: $space-xl $space-md $space-2xl;
+}
+
+.header {
+  margin-bottom: $space-md;
+}
+
+.kicker {
+  margin: 0 0 $space-xs;
+  color: $color-secondary-strong;
+}
+
+.title {
+  margin: 0 0 $space-xs;
+  color: $color-text;
+}
+
+.subtitle {
+  margin: 0;
+  color: $color-text-muted;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-sm;
+  margin-bottom: $space-md;
+}
+
+.scoreCard {
+  display: inline-grid;
+  gap: $space-2xs;
+  padding: $space-sm $space-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: $color-surface;
+}
+
+.startCard,
+.questionCard {
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  background-color: $color-surface;
+  box-shadow: $shadow-sm;
+  padding: $space-md;
+  margin-bottom: $space-md;
+}
+
+.roundLabel {
+  margin: 0 0 $space-xs;
+  color: $color-tertiary-strong;
+}
+
+.questionTitle {
+  margin: 0;
+  color: $color-text;
+}
+
+.hint {
+  margin: 0 0 $space-sm;
+  color: $color-text-muted;
+}
+
+.map {
+  width: 100%;
+  height: 22rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  margin-bottom: $space-md;
+}
+
+.feedback {
+  margin: 0 0 $space-sm;
+  color: $color-text;
+}
+
+.error {
+  margin: 0 0 $space-sm;
+  color: $color-danger;
+}
+
+.primaryButton,
+.secondaryButton {
+  min-height: 3rem;
+  border-radius: $radius-lg;
+  padding: $space-sm $space-md;
+}
+
+.primaryButton {
+  width: 100%;
+  border: 0;
+  background-color: $color-primary;
+  color: $color-surface;
+}
+
+.secondaryButton {
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-primary-strong;
+}

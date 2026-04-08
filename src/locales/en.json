@@ -12,6 +12,8 @@
       "startPlaying": "Start Playing",
       "viewModes": "View Modes",
       "reset": "Reset",
+      "startRound": "Start Round",
+      "submitPin": "Submit Pin",
       "home": "Home",
       "back": "Back",
       "nextQuestion": "Next Question",
@@ -71,26 +73,23 @@
       "title": "Start simple. Learn steadily.",
       "subtitle": "Enjoy short sessions and touch-friendly actions inside {{city}}.",
       "cta": {
-        "openMode": "Open Mode",
-        "comingSoon": "Available soon"
+        "openMode": "Open Mode"
       },
       "items": [
         {
           "title": "Direction Mode",
           "description": "Guess whether one {{city}} place sits north, south, east, or west of another.",
-          "status": "Available",
           "path": "/direction-mode"
         },
         {
           "title": "Route Mode",
           "description": "Choose 2 to 3 connector roads to reach destination from source in {{city}}.",
-          "status": "Available",
           "path": "/route-mode"
         },
         {
           "title": "Map Pin Mode",
           "description": "Tap the correct spot on the map to strengthen local memory in {{city}}.",
-          "status": "Available soon"
+          "path": "/map-pin-mode"
         }
       ]
     }
@@ -161,6 +160,33 @@
     "errors": {
       "searchFailed": "Failed to search places.",
       "invalidSelection": "Select 2 or 3 connectors before submitting."
+    }
+  },
+  "mapPinMode": {
+    "navigation": {
+      "label": "Map pin mode navigation"
+    },
+    "header": {
+      "kicker": "Map pin mode",
+      "title": "Find places by pinning the map.",
+      "subtitle": "Pin locations only inside {{city}} and sharpen your map memory."
+    },
+    "game": {
+      "roundLabel": "Round",
+      "instruction": "Pin the location of {{place}} in {{city}}.",
+      "submitHint": "Tap the map to place your guess pin.",
+      "feedbackPerfect": "Excellent pin.",
+      "feedbackClose": "Nice guess.",
+      "feedbackFar": "You can get closer next time.",
+      "revealLabel": "Distance: {{meters}} m",
+      "scoreLabel": "Score",
+      "scoreResult": "Round complete. Final score: {{score}}",
+      "loadingPlaces": "Loading places..."
+    },
+    "errors": {
+      "noPlaces": "Could not load enough places for {{city}}. Try again.",
+      "loadFailed": "Failed to load map pin questions.",
+      "selectPin": "Tap a point on the map before submitting."
     }
   }
 }

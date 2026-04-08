@@ -36,14 +36,8 @@
   box-shadow: $shadow-sm;
 }
 
-.status {
-  display: inline-flex;
-  margin: 0 0 $space-xs;
-  color: $color-secondary-strong;
-}
-
 .cardTitle {
-  margin: 0 0 $space-xs;
+  margin: 0 0 $space-sm;
   color: $color-primary-strong;
 }
 
@@ -65,9 +59,10 @@
   padding: $space-xs $space-md;
 }
 
-.comingSoon {
-  margin: $space-sm 0 0;
-  color: $color-text-muted;
+.noAction {
+  display: block;
+  height: 2.5rem;
+  margin-top: $space-sm;
 }
 
 @media (min-width: $breakpoint-md) {

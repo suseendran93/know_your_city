@@ -3,6 +3,7 @@
 ```text
 KnowYourCity/
 ├── AGENTS.md
+├── FUTURE_PLAN.md
 ├── PROJECT_STRUCTURE.md
 ├── know-your-chennai-game-idea.md
 ├── public/
