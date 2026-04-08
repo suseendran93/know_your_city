@@ -2,6 +2,13 @@
 
 This app should be deployed to Vercel (not GitHub Pages) because it uses Next.js API routes.
 
+## Current Status
+
+- Deployment target: `Vercel`
+- Status: `Live and working`
+- Environment variables: `Configured in Vercel`
+- Routing mode: `Real route API enabled via /api/routes`
+
 ## 1. Pre-check (local)
 
 Run:
@@ -62,6 +69,7 @@ After deployment, verify:
 4. API endpoints return JSON and not HTML errors:
    - `GET /api/places/search?q=Adyar&city=Chennai`
    - `GET /api/places/nearby?lat=13.0&lng=80.2&city=Chennai`
+   - `POST /api/routes` returns `route.distanceMeters`, `route.durationSeconds`, and `route.geometry`
 5. Firestore profile/stats update after finishing a round.
 
 ## 5. Common issues
@@ -72,3 +80,5 @@ After deployment, verify:
   - Firestore security rules are blocking writes; allow authenticated user access to their own document path.
 - 504/timeout for nearby places:
   - Overpass endpoint can be slow; retries/fallbacks are already implemented, but occasional delays are expected.
+- Route API `406`/`502`:
+  - Confirm `OPENROUTESERVICE_API_KEY` is set in Vercel and redeploy.

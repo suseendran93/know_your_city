@@ -18,6 +18,11 @@ type MapPinModeScreenProps = {
       roundLabel: string;
       instruction: string;
       submitHint: string;
+      difficultyLabel: string;
+      preSubmitHintLabel: string;
+      warmVeryClose: string;
+      warmClose: string;
+      warmFar: string;
       feedbackPerfect: string;
       feedbackClose: string;
       feedbackFar: string;
@@ -35,6 +40,7 @@ type MapPinModeScreenProps = {
   actions: {
     startRound: string;
     submitPin: string;
+    clearPin: string;
     nextQuestion: string;
     finishRound: string;
     reset: string;
@@ -58,12 +64,41 @@ type CityMapConfig = {
 };
 
 type LeafletModule = typeof import("leaflet");
+type Difficulty = "easy" | "medium" | "hard";
+
+type DifficultyConfig = {
+  key: Difficulty;
+  perfectMeters: number;
+  closeMeters: number;
+  assistRadiusMeters: number;
+};
 
 const roundSize = 5;
 const minimalRoutesTileUrl = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png";
 const labelsOnlyTileUrl = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png";
 const cartoAttribution =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+const difficultyOrder: Difficulty[] = ["easy", "medium", "hard"];
+const difficultyConfig: Record<Difficulty, DifficultyConfig> = {
+  easy: {
+    key: "easy",
+    perfectMeters: 500,
+    closeMeters: 1400,
+    assistRadiusMeters: 1400
+  },
+  medium: {
+    key: "medium",
+    perfectMeters: 300,
+    closeMeters: 900,
+    assistRadiusMeters: 900
+  },
+  hard: {
+    key: "hard",
+    perfectMeters: 180,
+    closeMeters: 650,
+    assistRadiusMeters: 650
+  }
+};
 
 const cityMapConfigs: Record<string, CityMapConfig> = {
   Chennai: {
@@ -153,6 +188,8 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const leafletRef = useRef<LeafletModule | null>(null);
   const guessLayerRef = useRef<import("leaflet").CircleMarker | null>(null);
+  const assistRingLayerRef = useRef<import("leaflet").Circle | null>(null);
+  const hoverRingLayerRef = useRef<import("leaflet").Circle | null>(null);
   const actualLayerRef = useRef<import("leaflet").CircleMarker | null>(null);
   const submittedRef = useRef(false);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -161,14 +198,18 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState("");
+  const [hoverGuess, setHoverGuess] = useState<Guess | null>(null);
+  const [preSubmitHint, setPreSubmitHint] = useState("");
   const [error, setError] = useState("");
   const [loadingRound, setLoadingRound] = useState(false);
   const [resultCommitted, setResultCommitted] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>("easy");
 
   const cityConfig = getCityConfig(cityName);
   const currentQuestion = questions[currentQuestionIndex] ?? null;
   const isRoundActive = questions.length > 0 && currentQuestionIndex < questions.length;
   const isRoundComplete = questions.length > 0 && currentQuestionIndex >= questions.length;
+  const activeDifficulty = difficultyConfig[difficulty];
 
   useEffect(() => {
     if (!isRoundComplete || resultCommitted) {
@@ -240,6 +281,22 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
           lng: event.latlng.lng
         };
         setGuess(nextGuess);
+        setHoverGuess(null);
+      });
+
+      map.on("mousemove", (event) => {
+        if (submittedRef.current) {
+          return;
+        }
+
+        setHoverGuess({
+          lat: event.latlng.lat,
+          lng: event.latlng.lng
+        });
+      });
+
+      map.on("mouseout", () => {
+        setHoverGuess(null);
       });
 
       mapRef.current = map;
@@ -266,6 +323,10 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
       map.removeLayer(guessLayerRef.current);
       guessLayerRef.current = null;
     }
+    if (assistRingLayerRef.current) {
+      map.removeLayer(assistRingLayerRef.current);
+      assistRingLayerRef.current = null;
+    }
 
     if (!guess) {
       return;
@@ -277,7 +338,42 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
       fillColor: "#0e7490",
       fillOpacity: 0.9
     }).addTo(map);
-  }, [guess]);
+
+    assistRingLayerRef.current = L.circle([guess.lat, guess.lng], {
+      radius: activeDifficulty.assistRadiusMeters,
+      color: "#0e7490",
+      fillColor: "#0e7490",
+      fillOpacity: 0.14,
+      weight: 1
+    }).addTo(map);
+  }, [activeDifficulty.assistRadiusMeters, guess]);
+
+  useEffect(() => {
+    const L = leafletRef.current;
+    const map = mapRef.current;
+
+    if (!L || !map) {
+      return;
+    }
+
+    if (hoverRingLayerRef.current) {
+      map.removeLayer(hoverRingLayerRef.current);
+      hoverRingLayerRef.current = null;
+    }
+
+    if (!hoverGuess || guess || hasSubmitted) {
+      return;
+    }
+
+    hoverRingLayerRef.current = L.circle([hoverGuess.lat, hoverGuess.lng], {
+      radius: activeDifficulty.assistRadiusMeters,
+      color: "#0369a1",
+      fillColor: "#0369a1",
+      fillOpacity: 0.08,
+      weight: 1,
+      dashArray: "4 4"
+    }).addTo(map);
+  }, [activeDifficulty.assistRadiusMeters, guess, hasSubmitted, hoverGuess]);
 
   useEffect(() => {
     const L = leafletRef.current;
@@ -319,10 +415,45 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
     map.flyTo(cityConfig.center, cityConfig.zoom, { duration: 0.4 });
   }, [cityConfig.center, cityConfig.zoom, currentQuestion, hasSubmitted]);
 
+  useEffect(() => {
+    if (!guess || !currentQuestion || hasSubmitted) {
+      setPreSubmitHint("");
+      return;
+    }
+
+    const distance = distanceMeters(guess, {
+      lat: currentQuestion.place.lat,
+      lng: currentQuestion.place.lng
+    });
+
+    if (distance <= activeDifficulty.perfectMeters) {
+      setPreSubmitHint(content.game.warmVeryClose);
+      return;
+    }
+
+    if (distance <= activeDifficulty.closeMeters) {
+      setPreSubmitHint(content.game.warmClose);
+      return;
+    }
+
+    setPreSubmitHint(content.game.warmFar);
+  }, [
+    activeDifficulty.closeMeters,
+    activeDifficulty.perfectMeters,
+    content.game.warmClose,
+    content.game.warmFar,
+    content.game.warmVeryClose,
+    currentQuestion,
+    guess,
+    hasSubmitted
+  ]);
+
   async function startRound() {
     setLoadingRound(true);
     setError("");
     setFeedback("");
+    setPreSubmitHint("");
+    setHoverGuess(null);
     setGuess(null);
     setHasSubmitted(false);
     setScore(0);
@@ -350,9 +481,11 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
     setQuestions([]);
     setCurrentQuestionIndex(0);
     setGuess(null);
+    setHoverGuess(null);
     setHasSubmitted(false);
     setScore(0);
     setFeedback("");
+    setPreSubmitHint("");
     setError("");
     setResultCommitted(false);
   }
@@ -374,9 +507,13 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
       lat: currentQuestion.place.lat,
       lng: currentQuestion.place.lng
     });
+    const isWithinRange = distance <= activeDifficulty.assistRadiusMeters;
 
-    if (distance <= 300) {
-      setScore((current) => current + 2);
+    if (isWithinRange) {
+      setScore((current) => current + 1);
+    }
+
+    if (distance <= activeDifficulty.perfectMeters) {
       setFeedback(
         `${content.game.feedbackPerfect} ${interpolate(content.game.revealLabel, {
           meters: Math.round(distance)
@@ -385,7 +522,7 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
       return;
     }
 
-    if (distance <= 900) {
+    if (distance <= activeDifficulty.closeMeters) {
       setScore((current) => current + 1);
       setFeedback(
         `${content.game.feedbackClose} ${interpolate(content.game.revealLabel, {
@@ -402,11 +539,20 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
     );
   }
 
+  function clearPin() {
+    setGuess(null);
+    setHoverGuess(null);
+    setPreSubmitHint("");
+    setError("");
+  }
+
   function goNextQuestion() {
     setCurrentQuestionIndex((index) => index + 1);
     setGuess(null);
+    setHoverGuess(null);
     setHasSubmitted(false);
     setFeedback("");
+    setPreSubmitHint("");
     setError("");
   }
 
@@ -431,6 +577,21 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
       {!isRoundActive && !isRoundComplete ? (
         <div className={styles.startCard}>
           <p className={`type-body-md ${styles.hint}`}>{content.game.submitHint}</p>
+          <div className={styles.difficultyCard}>
+            <p className={`type-label ${styles.difficultyLabel}`}>{content.game.difficultyLabel}</p>
+            <div className={styles.difficultyRow}>
+              {difficultyOrder.map((difficultyValue) => (
+                <button
+                  key={difficultyValue}
+                  type="button"
+                  className={`${styles.difficultyButton} ${difficulty === difficultyValue ? styles.difficultyButtonActive : ""} type-button`}
+                  onClick={() => setDifficulty(difficultyValue)}
+                >
+                  {difficultyValue}
+                </button>
+              ))}
+            </div>
+          </div>
           <button type="button" className={`${styles.primaryButton} type-button`} onClick={startRound}>
             {loadingRound ? content.game.loadingPlaces : actions.startRound}
           </button>
@@ -451,12 +612,27 @@ export function MapPinModeScreen({ cityName, content, actions }: MapPinModeScree
           <div ref={mapContainerRef} className={styles.map} />
 
           {feedback ? <p className={`type-body-md ${styles.feedback}`}>{feedback}</p> : null}
+          {!hasSubmitted && preSubmitHint ? (
+            <p className={`type-body-sm ${styles.hintText}`}>
+              {content.game.preSubmitHintLabel} {preSubmitHint}
+            </p>
+          ) : null}
           {error ? <p className={`type-body-sm ${styles.error}`}>{error}</p> : null}
 
           {!hasSubmitted ? (
-            <button type="button" className={`${styles.primaryButton} type-button`} onClick={submitPin}>
-              {actions.submitPin}
-            </button>
+            <div className={styles.actionRow}>
+              <button
+                type="button"
+                className={`${styles.secondaryButton} type-button`}
+                onClick={clearPin}
+                disabled={!guess}
+              >
+                {actions.clearPin}
+              </button>
+              <button type="button" className={`${styles.primaryButton} type-button`} onClick={submitPin}>
+                {actions.submitPin}
+              </button>
+            </div>
           ) : (
             <button type="button" className={`${styles.primaryButton} type-button`} onClick={goNextQuestion}>
               {currentQuestionIndex === questions.length - 1 ? actions.finishRound : actions.nextQuestion}

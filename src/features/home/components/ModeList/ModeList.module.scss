@@ -29,11 +29,14 @@
 }
 
 .card {
+  display: flex;
+  flex-direction: column;
   padding: $space-md;
   border-radius: $radius-xl;
   background-color: $color-surface;
   border: 1px solid $color-border;
   box-shadow: $shadow-sm;
+  min-height: 100%;
 }
 
 .cardTitle {
@@ -51,7 +54,7 @@
   align-items: center;
   justify-content: center;
   min-height: 2.5rem;
-  margin-top: $space-sm;
+  margin-top: auto;
   border-radius: $radius-lg;
   border: 0;
   background-color: $color-primary;
@@ -62,7 +65,7 @@
 .noAction {
   display: block;
   height: 2.5rem;
-  margin-top: $space-sm;
+  margin-top: auto;
 }
 
 @media (min-width: $breakpoint-md) {

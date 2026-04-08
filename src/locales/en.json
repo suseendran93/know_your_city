@@ -14,6 +14,7 @@
       "reset": "Reset",
       "startRound": "Start Round",
       "submitPin": "Submit Pin",
+      "clearPin": "Reset Pin",
       "home": "Home",
       "back": "Back",
       "nextQuestion": "Next Question",
@@ -97,7 +98,7 @@
       "title": "Start simple. Learn steadily.",
       "subtitle": "Enjoy short sessions and touch-friendly actions inside {{city}}.",
       "cta": {
-        "openMode": "Open Mode"
+        "openMode": "Open"
       },
       "items": [
         {
@@ -200,6 +201,11 @@
       "roundLabel": "Round",
       "instruction": "Pin the location of {{place}} in {{city}}.",
       "submitHint": "Tap the map to place your guess pin.",
+      "difficultyLabel": "Difficulty",
+      "preSubmitHintLabel": "Hint:",
+      "warmVeryClose": "Very close",
+      "warmClose": "Close",
+      "warmFar": "Far",
       "feedbackPerfect": "Excellent pin.",
       "feedbackClose": "Nice guess.",
       "feedbackFar": "You can get closer next time.",
