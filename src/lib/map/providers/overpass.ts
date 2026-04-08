@@ -1,4 +1,5 @@
 import { OVERPASS_BASE_URL, OVERPASS_FALLBACK_BASE_URLS } from "@/lib/map/constants";
+import { getOverpassCityPattern } from "@/lib/map/city";
 import { fetchJson, getAppIdentityHeaders } from "@/lib/map/request";
 import type { NearbyPlaceResult } from "@/types/location";
 
@@ -17,18 +18,21 @@ type OverpassResponse = {
   elements: OverpassElement[];
 };
 
-function buildNearbyQuery(lat: number, lng: number, radiusMeters: number, limit: number) {
+function buildNearbyQuery(lat: number, lng: number, city: string, radiusMeters: number, limit: number) {
+  const cityPattern = getOverpassCityPattern(city).replace(/"/g, '\\"');
+
   return `
     [out:json][timeout:12];
+    area["boundary"="administrative"]["name"~"^(${cityPattern})$",i]->.city;
     (
-      node(around:${radiusMeters},${lat},${lng})["name"]["place"];
-      way(around:${radiusMeters},${lat},${lng})["name"]["place"];
-      relation(around:${radiusMeters},${lat},${lng})["name"]["place"];
-      node(around:${radiusMeters},${lat},${lng})["name"]["amenity"];
-      node(around:${radiusMeters},${lat},${lng})["name"]["tourism"];
-      node(around:${radiusMeters},${lat},${lng})["name"]["leisure"];
-      node(around:${radiusMeters},${lat},${lng})["name"]["shop"];
-      node(around:${radiusMeters},${lat},${lng})["name"]["highway"];
+      node(around:${radiusMeters},${lat},${lng})(area.city)["name"]["place"];
+      way(around:${radiusMeters},${lat},${lng})(area.city)["name"]["place"];
+      relation(around:${radiusMeters},${lat},${lng})(area.city)["name"]["place"];
+      node(around:${radiusMeters},${lat},${lng})(area.city)["name"]["amenity"];
+      node(around:${radiusMeters},${lat},${lng})(area.city)["name"]["tourism"];
+      node(around:${radiusMeters},${lat},${lng})(area.city)["name"]["leisure"];
+      node(around:${radiusMeters},${lat},${lng})(area.city)["name"]["shop"];
+      node(around:${radiusMeters},${lat},${lng})(area.city)["name"]["highway"];
     );
     out center ${limit};
   `;
@@ -68,8 +72,14 @@ async function requestNearbyPlaces(url: string, body: string) {
   });
 }
 
-export async function getNearbyPlaces(lat: number, lng: number, radiusMeters = 1500, limit = 20) {
-  const body = buildNearbyQuery(lat, lng, radiusMeters, limit);
+export async function getNearbyPlaces(
+  lat: number,
+  lng: number,
+  city: string,
+  radiusMeters = 1500,
+  limit = 20
+) {
+  const body = buildNearbyQuery(lat, lng, city, radiusMeters, limit);
   const endpoints = [OVERPASS_BASE_URL, ...OVERPASS_FALLBACK_BASE_URLS];
   let lastError: Error | null = null;
 

@@ -32,4 +32,14 @@ describe("getRouteConnectorChallenge", () => {
       expect(challenge.connectorOptions.some((option) => option.id === expected.id)).toBe(true);
     }
   });
+
+  it("uses Bengaluru connector catalog when city is Bangalore", () => {
+    const challenge = getRouteConnectorChallenge(placeA, placeB, "Bangalore");
+    const chennaiConnectorIds = new Set(["omr", "ecr", "gst", "irr", "mount", "poona", "hundred-feet", "sardar", "arcot"]);
+
+    expect(challenge.connectorOptions.length).toBeGreaterThan(0);
+    expect(
+      challenge.connectorOptions.some((connector) => chennaiConnectorIds.has(connector.id))
+    ).toBe(false);
+  });
 });

@@ -1,0 +1,62 @@
+@use "../../styles/variables" as *;
+
+.page {
+  min-height: 100vh;
+  padding: $space-md $space-md $space-2xl;
+}
+
+.navWrap {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.card {
+  max-width: 48rem;
+  margin: 0 auto;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  background-color: $color-surface;
+  box-shadow: $shadow-sm;
+  padding: $space-md;
+}
+
+.kicker {
+  margin: 0 0 $space-xs;
+  color: $color-secondary-strong;
+}
+
+.title {
+  margin: 0 0 $space-xs;
+  color: $color-text;
+}
+
+.subtitle {
+  margin: 0 0 $space-md;
+  color: $color-text-muted;
+}
+
+.label {
+  display: block;
+  margin-bottom: $space-xs;
+  color: $color-primary-strong;
+}
+
+.select {
+  width: 100%;
+  min-height: 3rem;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  padding: $space-sm $space-md;
+  background-color: $color-surface;
+  color: $color-text;
+}
+
+.logoutButton {
+  width: 100%;
+  min-height: 3rem;
+  margin-top: $space-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: $color-surface;
+  color: $color-danger;
+}

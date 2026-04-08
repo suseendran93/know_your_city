@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { CitySelectionModal } from "@/components/layout/CitySelectionModal/CitySelectionModal";
+import { AppProvider } from "@/components/providers/AppProvider/AppProvider";
+import { getMessages } from "@/lib/i18n";
 import "./globals.scss";
 
 export const metadata: Metadata = {
-  title: "Know Your Chennai",
-  description: "A simple mobile-first game to learn Chennai through directions, places, and maps."
+  title: "Know Your City",
+  description: "Learn city directions, places, and routes."
 };
 
 type RootLayoutProps = Readonly<{
@@ -11,9 +14,25 @@ type RootLayoutProps = Readonly<{
 }>;
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const messages = getMessages();
+
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AppProvider>
+          {children}
+          <CitySelectionModal
+            title={messages.common.cityModal.title}
+            description={messages.common.cityModal.description}
+            selectLabel={messages.common.cityModal.selectLabel}
+            saveLabel={messages.common.cityModal.saveLabel}
+            options={[
+              { value: "Chennai", label: messages.common.cities.chennai },
+              { value: "Bangalore", label: messages.common.cities.bangalore }
+            ]}
+          />
+        </AppProvider>
+      </body>
     </html>
   );
 }

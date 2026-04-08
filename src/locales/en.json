@@ -1,6 +1,13 @@
 {
   "common": {
-    "appName": "Know Your Chennai",
+    "appName": "Know Your City",
+    "cities": {
+      "chennai": "Chennai",
+      "bangalore": "Bangalore"
+    },
+    "labels": {
+      "activeCity": "Active city"
+    },
     "actions": {
       "startPlaying": "Start Playing",
       "viewModes": "View Modes",
@@ -12,56 +19,78 @@
       "startFiveQuestions": "Start 5 Questions",
       "buildingRound": "Building Round...",
       "submitAnswer": "Submit Connectors",
-      "newChallenge": "New Challenge",
-      "generateChallenge": "Build Route Challenge"
+      "generateChallenge": "Build Route Challenge",
+      "settings": "Settings"
     },
     "status": {
       "searching": "Searching..."
+    },
+    "cityModal": {
+      "title": "Select your city",
+      "description": "Choose one city before playing. You can change this later in Settings.",
+      "selectLabel": "City",
+      "saveLabel": "Save City"
     }
+  },
+  "auth": {
+    "kicker": "Welcome",
+    "title": "Sign in or create your account",
+    "subtitle": "Continue your city challenge with your account.",
+    "loginTab": "Login",
+    "signupTab": "Sign up",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "loginAction": "Login",
+    "signupAction": "Create account"
+  },
+  "settings": {
+    "navigationLabel": "Settings navigation",
+    "kicker": "Settings",
+    "title": "Game preferences",
+    "subtitle": "Change city anytime. Gameplay and API requests are scoped to this city.",
+    "cityLabel": "Selected city",
+    "logoutAction": "Logout"
   },
   "home": {
     "hero": {
-      "badge": "Know Your Chennai",
-      "title": "Learn Chennai like a local.",
-      "description": "A simple mobile-first game to practice directions, neighborhoods, and city memory without making the interface feel heavy.",
+      "badge": "Know Your {{city}}",
+      "title": "Learn {{city}} like a local.",
+      "description": "Practice directions, neighborhoods, and routes across {{city}}.",
       "panelLabel": "Today's focus",
       "panelTitle": "3 quick ways to learn the city",
       "panelItems": [
-        "Guess directions between real Chennai areas",
-        "Tap the right place on the map",
-        "Build a daily streak in small sessions"
+        "Guess directions between real areas",
+        "Choose smart route connectors",
+        "Build confidence with short sessions"
       ]
     },
     "modes": {
       "kicker": "Game modes",
       "title": "Start simple. Learn steadily.",
-      "subtitle": "The first version focuses on short sessions, clear questions, and touch-friendly actions.",
+      "subtitle": "Enjoy short sessions and touch-friendly actions inside {{city}}.",
       "cta": {
         "openMode": "Open Mode",
-        "comingSoon": "Coming soon"
+        "comingSoon": "Available soon"
       },
       "items": [
         {
           "title": "Direction Mode",
-          "description": "Guess whether a place sits north, south, east, or west from another Chennai location.",
-          "status": "Ready for MVP",
+          "description": "Guess whether one {{city}} place sits north, south, east, or west of another.",
+          "status": "Available",
           "path": "/direction-mode"
         },
         {
           "title": "Route Mode",
-          "description": "Choose 2 to 3 connector roads to build a practical path from source to destination.",
-          "status": "Ready for MVP",
+          "description": "Choose 2 to 3 connector roads to reach destination from source in {{city}}.",
+          "status": "Available",
           "path": "/route-mode"
         },
         {
           "title": "Map Pin Mode",
-          "description": "Tap the correct spot on the map to build stronger memory of Chennai neighborhoods.",
-          "status": "Ready for MVP"
-        },
-        {
-          "title": "Daily Challenge",
-          "description": "Play five quick questions a day and keep a local streak going on your phone.",
-          "status": "Next step"
+          "description": "Tap the correct spot on the map to strengthen local memory in {{city}}.",
+          "status": "Available soon"
         }
       ]
     }
@@ -73,34 +102,33 @@
     "header": {
       "kicker": "Direction mode",
       "title": "Pick two real places and play five quick questions.",
-      "subtitle": "Search starts while you type. The app uses live free place data, then builds a short direction round from the selected area."
+      "subtitle": "Search starts while you type and all questions stay inside {{city}}."
     },
     "score": {
       "label": "Score",
       "roundLabel": "Round",
       "roundComplete": "Round complete",
       "roundCompleteTitle": "You scored {{score}} out of {{total}}.",
-      "roundCompleteDescription": "Keep the same places and start again, or reset and try a different pair."
+      "roundCompleteDescription": "Reset to try a different place pair in {{city}}."
     },
     "search": {
       "fromLabel": "From place",
       "toLabel": "To place",
-      "placeholder": "Search a city, area, or landmark",
-      "emptyError": "Enter at least 2 characters.",
+      "placeholder": "Search a place in {{city}}",
       "noResults": "No places found.",
       "selectedPrefix": "Selected:"
     },
     "question": {
       "label": "Question {{index}}",
       "title": "Where is {{to}} from {{from}}?",
-      "hint": "Choose the strongest direction based on the coordinates.",
+      "hint": "Choose the strongest direction based on coordinates.",
       "correct": "Correct. {{to}} is {{answer}} of {{from}}.",
       "wrong": "Not quite. The best answer is {{answer}}."
     },
     "errors": {
-      "roundBuild": "Could not build 5 questions for this place yet. Try a bigger area or landmark.",
+      "roundBuild": "Could not build 5 questions for this place. Try another landmark in {{city}}.",
       "searchFailed": "Failed to search places.",
-      "nearbyFailed": "Nearby place service timed out. Please try again with a larger landmark or city area.",
+      "nearbyFailed": "Nearby place service timed out. Try a different source in {{city}}.",
       "roundFailed": "Failed to create the question set."
     }
   },
@@ -111,12 +139,12 @@
     "header": {
       "kicker": "Route mode",
       "title": "Build a connector path between two places.",
-      "subtitle": "Select source and destination, then choose 2 or 3 connector routes that best fit the trip."
+      "subtitle": "Select source and destination, then choose 2 or 3 connector routes inside {{city}}."
     },
     "search": {
       "fromLabel": "From place",
       "toLabel": "To place",
-      "placeholder": "Search a city, area, or landmark",
+      "placeholder": "Search a place in {{city}}",
       "selectedPrefix": "Selected:",
       "noResults": "No places found."
     },

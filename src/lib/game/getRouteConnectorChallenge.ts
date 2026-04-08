@@ -10,7 +10,9 @@ export type RouteConnectorChallenge = {
   connectorOptions: RouteConnector[];
 };
 
-const connectorCatalog: RouteConnector[] = [
+type SupportedConnectorCity = "Chennai" | "Bengaluru";
+
+const chennaiConnectorCatalog: RouteConnector[] = [
   { id: "omr", name: "OMR" },
   { id: "ecr", name: "ECR" },
   { id: "gst", name: "GST Road" },
@@ -22,11 +24,39 @@ const connectorCatalog: RouteConnector[] = [
   { id: "arcot", name: "Arcot Road" }
 ];
 
-function getById(id: string) {
-  return connectorCatalog.find((connector) => connector.id === id);
+const bengaluruConnectorCatalog: RouteConnector[] = [
+  { id: "orr", name: "Outer Ring Road" },
+  { id: "nice", name: "NICE Road" },
+  { id: "hosur", name: "Hosur Road" },
+  { id: "mysore", name: "Mysore Road" },
+  { id: "tumkur", name: "Tumkur Road" },
+  { id: "old-madras", name: "Old Madras Road" },
+  { id: "bannerghatta", name: "Bannerghatta Road" },
+  { id: "kanakapura", name: "Kanakapura Road" },
+  { id: "airport", name: "Bellary Road (Airport Road)" }
+];
+
+function normalizeConnectorCity(cityName: string): SupportedConnectorCity {
+  const normalized = cityName.trim().toLowerCase();
+
+  if (normalized === "bangalore" || normalized === "bengaluru") {
+    return "Bengaluru";
+  }
+
+  return "Chennai";
 }
 
-function pickHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
+function getCatalog(cityName: string) {
+  const city = normalizeConnectorCity(cityName);
+
+  return city === "Bengaluru" ? bengaluruConnectorCatalog : chennaiConnectorCatalog;
+}
+
+function getById(id: string, catalog: RouteConnector[]) {
+  return catalog.find((connector) => connector.id === id);
+}
+
+function pickChennaiHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
   const lngDelta = to.lng - from.lng;
   const latDelta = to.lat - from.lat;
   const distanceMagnitude = Math.hypot(latDelta, lngDelta);
@@ -58,11 +88,52 @@ function pickHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
     picks.push("sardar");
   }
 
-  const unique = Array.from(new Set(picks));
+  return picks;
+}
+
+function pickBengaluruHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
+  const lngDelta = to.lng - from.lng;
+  const latDelta = to.lat - from.lat;
+  const distanceMagnitude = Math.hypot(latDelta, lngDelta);
+  const picks: string[] = ["orr"];
+
+  if (Math.abs(latDelta) > 0.06) {
+    picks.push("hosur");
+  }
+
+  if (Math.abs(lngDelta) > 0.08) {
+    picks.push("old-madras");
+  }
+
+  if (from.lng < 77.52 || to.lng < 77.52) {
+    picks.push("nice");
+  }
+
+  if (from.lat > 13.1 || to.lat > 13.1) {
+    picks.push("airport");
+  }
+
+  if (distanceMagnitude > 0.15) {
+    picks.push("tumkur");
+  } else {
+    picks.push("bannerghatta");
+  }
+
+  return picks;
+}
+
+function pickHeuristicConnectors(from: PlaceResult, to: PlaceResult, cityName: string) {
+  const city = normalizeConnectorCity(cityName);
+  const candidatePicks =
+    city === "Bengaluru"
+      ? pickBengaluruHeuristicConnectors(from, to)
+      : pickChennaiHeuristicConnectors(from, to);
+
+  const unique = Array.from(new Set(candidatePicks));
   const trimmed = unique.slice(0, 3);
 
   if (trimmed.length < 2) {
-    trimmed.push("mount");
+    trimmed.push(city === "Bengaluru" ? "kanakapura" : "mount");
   }
 
   return trimmed;
@@ -81,13 +152,18 @@ function shuffle<T>(values: T[]) {
   return next;
 }
 
-export function getRouteConnectorChallenge(from: PlaceResult, to: PlaceResult): RouteConnectorChallenge {
-  const expectedIds = pickHeuristicConnectors(from, to);
+export function getRouteConnectorChallenge(
+  from: PlaceResult,
+  to: PlaceResult,
+  cityName = "Chennai"
+): RouteConnectorChallenge {
+  const catalog = getCatalog(cityName);
+  const expectedIds = pickHeuristicConnectors(from, to, cityName);
   const expectedConnectors = expectedIds
-    .map((connectorId) => getById(connectorId))
+    .map((connectorId) => getById(connectorId, catalog))
     .filter((connector): connector is RouteConnector => Boolean(connector));
 
-  const filler = connectorCatalog.filter(
+  const filler = catalog.filter(
     (connector) => !expectedConnectors.some((expected) => expected.id === connector.id)
   );
 

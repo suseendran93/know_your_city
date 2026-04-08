@@ -8,6 +8,7 @@ describe("DirectionModeScreen", () => {
   it("renders the setup UI and keeps the start button disabled initially", () => {
     render(
       <DirectionModeScreen
+        cityName="Chennai"
         content={messages.directionMode}
         actions={messages.common.actions}
         status={messages.common.status}
@@ -21,13 +22,14 @@ describe("DirectionModeScreen", () => {
   it("does not show a searching state before typing enough text", () => {
     render(
       <DirectionModeScreen
+        cityName="Chennai"
         content={messages.directionMode}
         actions={messages.common.actions}
         status={messages.common.status}
       />
     );
 
-    const inputs = screen.getAllByPlaceholderText(/search a city, area, or landmark/i);
+    const inputs = screen.getAllByPlaceholderText(/search a place in/i);
     fireEvent.change(inputs[0], { target: { value: "a" } });
 
     expect(screen.queryByText(/searching/i)).not.toBeInTheDocument();
@@ -36,6 +38,7 @@ describe("DirectionModeScreen", () => {
   it("does not render duplicate loading states on first paint", () => {
     render(
       <DirectionModeScreen
+        cityName="Chennai"
         content={messages.directionMode}
         actions={messages.common.actions}
         status={messages.common.status}

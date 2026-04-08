@@ -30,8 +30,10 @@ const initialSearchState: SearchState = {
   error: ""
 };
 
-async function searchPlaces(query: string): Promise<PlaceResult[]> {
-  const response = await fetch(`/api/places/search?q=${encodeURIComponent(query)}&limit=5`);
+async function searchPlaces(query: string, cityName: string): Promise<PlaceResult[]> {
+  const response = await fetch(
+    `/api/places/search?q=${encodeURIComponent(query)}&limit=5&city=${encodeURIComponent(cityName)}`
+  );
   const payload = (await response.json()) as { places?: PlaceResult[]; error?: string };
 
   if (!response.ok) {
@@ -41,9 +43,10 @@ async function searchPlaces(query: string): Promise<PlaceResult[]> {
   return payload.places ?? [];
 }
 
-async function fetchNearbyPlaces(place: PlaceResult): Promise<NearbyPlaceResult[]> {
+async function fetchNearbyPlaces(place: PlaceResult, cityName: string): Promise<NearbyPlaceResult[]> {
   const response = await fetch(
-    `/api/places/nearby?lat=${place.lat}&lng=${place.lng}&radius=2200&limit=16`
+    `/api/places/nearby?lat=${place.lat}&lng=${place.lng}&radius=2200&limit=16&city=${encodeURIComponent(cityName)}`,
+    { signal: AbortSignal.timeout(4500) }
   );
   const payload = (await response.json()) as { places?: NearbyPlaceResult[]; error?: string };
 
@@ -52,6 +55,34 @@ async function fetchNearbyPlaces(place: PlaceResult): Promise<NearbyPlaceResult[
   }
 
   return payload.places ?? [];
+}
+
+async function fetchFallbackCityPlaces(cityName: string): Promise<PlaceResult[]> {
+  const fallbackQueries = [
+    "metro station",
+    "railway station",
+    "bus stand",
+    "park",
+    "shopping mall",
+    "hospital"
+  ];
+
+  const settled = await Promise.allSettled(
+    fallbackQueries.map((query) => searchPlaces(query, cityName))
+  );
+
+  const merged = settled
+    .filter((result): result is PromiseFulfilledResult<PlaceResult[]> => result.status === "fulfilled")
+    .flatMap((result) => result.value);
+
+  return merged.filter(
+    (place, index, places) =>
+      places.findIndex(
+        (candidate) =>
+          candidate.id === place.id ||
+          normalizePlaceName(candidate.name) === normalizePlaceName(place.name)
+      ) === index
+  );
 }
 
 function buildRoundQuestions(fromPlace: PlaceResult, toPlace: PlaceResult, nearbyPlaces: PlaceResult[]) {
@@ -76,6 +107,7 @@ function normalizePlaceName(name: string) {
 }
 
 type DirectionModeScreenProps = {
+  cityName: string;
   content: {
     header: {
       kicker: string;
@@ -93,7 +125,6 @@ type DirectionModeScreenProps = {
       fromLabel: string;
       toLabel: string;
       placeholder: string;
-      emptyError: string;
       noResults: string;
       selectedPrefix: string;
     };
@@ -123,7 +154,7 @@ type DirectionModeScreenProps = {
   };
 };
 
-export function DirectionModeScreen({ content, actions, status }: DirectionModeScreenProps) {
+export function DirectionModeScreen({ cityName, content, actions, status }: DirectionModeScreenProps) {
   const [fromSearch, setFromSearch] = useState<SearchState>(initialSearchState);
   const [toSearch, setToSearch] = useState<SearchState>(initialSearchState);
   const [selectedFrom, setSelectedFrom] = useState<PlaceResult | null>(null);
@@ -142,6 +173,7 @@ export function DirectionModeScreen({ content, actions, status }: DirectionModeS
 
   useDebouncedSearch(
     fromSearch.query,
+    cityName,
     selectedFrom,
     content.search.noResults,
     content.errors.searchFailed,
@@ -149,6 +181,7 @@ export function DirectionModeScreen({ content, actions, status }: DirectionModeS
   );
   useDebouncedSearch(
     toSearch.query,
+    cityName,
     selectedTo,
     content.search.noResults,
     content.errors.searchFailed,
@@ -218,30 +251,51 @@ export function DirectionModeScreen({ content, actions, status }: DirectionModeS
     setScore(0);
 
     try {
-      const nearbyPlaces = await fetchNearbyPlaces(selectedFrom);
-      const normalizedNearbyPlaces: PlaceResult[] = nearbyPlaces.map((place) => ({
-        id: place.id,
-        name: place.name,
-        fullAddress: place.fullAddress,
-        lat: place.lat,
-        lng: place.lng,
-        category: place.category,
-        city: place.city,
-        state: place.state,
-        country: place.country
-      }));
+      const fallbackPlacesPromise = fetchFallbackCityPlaces(cityName);
+      let candidatePlaces: PlaceResult[] = [];
 
-      const nextQuestions = buildRoundQuestions(selectedFrom, selectedTo, normalizedNearbyPlaces);
+      try {
+        const nearbyPlaces = await fetchNearbyPlaces(selectedFrom, cityName);
+        candidatePlaces = nearbyPlaces.map((place) => ({
+          id: place.id,
+          name: place.name,
+          fullAddress: place.fullAddress,
+          lat: place.lat,
+          lng: place.lng,
+          category: place.category,
+          city: place.city,
+          state: place.state,
+          country: place.country
+        }));
+      } catch {
+        candidatePlaces = await fallbackPlacesPromise;
+      }
+
+      if (candidatePlaces.length < roundSize) {
+        const fallbackPlaces = await fallbackPlacesPromise;
+        candidatePlaces = [
+          ...candidatePlaces,
+          ...fallbackPlaces.filter(
+            (place) =>
+              !candidatePlaces.some(
+                (candidate) =>
+                  candidate.id === place.id ||
+                  normalizePlaceName(candidate.name) === normalizePlaceName(place.name)
+              )
+          )
+        ];
+      }
+
+      const nextQuestions = buildRoundQuestions(selectedFrom, selectedTo, candidatePlaces);
 
       if (nextQuestions.length < roundSize) {
         setRoundError(content.errors.roundBuild);
-        setRoundLoading(false);
         return;
       }
 
       setQuestions(nextQuestions);
-    } catch (error) {
-      setRoundError(error instanceof Error ? error.message : content.errors.nearbyFailed);
+    } catch {
+      setRoundError(content.errors.nearbyFailed);
     } finally {
       setRoundLoading(false);
     }
@@ -430,6 +484,7 @@ export function DirectionModeScreen({ content, actions, status }: DirectionModeS
 
 function useDebouncedSearch(
   query: string,
+  cityName: string,
   selectedPlace: PlaceResult | null,
   noResultsLabel: string,
   searchFailedLabel: string,
@@ -460,7 +515,7 @@ function useDebouncedSearch(
 
     const timeoutId = window.setTimeout(async () => {
       try {
-        const places = await searchPlaces(trimmedQuery);
+        const places = await searchPlaces(trimmedQuery, cityName);
 
         setState((previousState) => {
           if (previousState.query.trim() !== trimmedQuery) {
@@ -491,7 +546,7 @@ function useDebouncedSearch(
     }, 350);
 
     return () => window.clearTimeout(timeoutId);
-  }, [noResultsLabel, query, searchFailedLabel, selectedPlace, setState]);
+  }, [cityName, noResultsLabel, query, searchFailedLabel, selectedPlace, setState]);
 }
 
 type PlaceSearchCardProps = {

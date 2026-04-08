@@ -1,0 +1,81 @@
+@use "../../styles/variables" as *;
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: $space-md;
+}
+
+.card {
+  width: min(100%, 28rem);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  background-color: $color-surface;
+  box-shadow: $shadow-md;
+  padding: $space-lg;
+}
+
+.kicker {
+  margin: 0 0 $space-xs;
+  color: $color-secondary-strong;
+}
+
+.title {
+  margin: 0 0 $space-xs;
+  color: $color-text;
+}
+
+.subtitle {
+  margin: 0 0 $space-md;
+  color: $color-text-muted;
+}
+
+.modeRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-sm;
+  margin-bottom: $space-md;
+}
+
+.modeButton {
+  min-height: 2.75rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: $color-surface;
+  color: $color-text-muted;
+}
+
+.modeButtonActive {
+  background-color: $color-primary-soft;
+  color: $color-primary-strong;
+  border-color: $color-primary;
+}
+
+.form {
+  display: grid;
+  gap: $space-xs;
+}
+
+.label {
+  margin-top: $space-sm;
+  color: $color-primary-strong;
+}
+
+.input {
+  min-height: 3rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-sm $space-md;
+  background-color: $color-surface;
+  color: $color-text;
+}
+
+.submitButton {
+  margin-top: $space-md;
+  min-height: 3rem;
+  border: 0;
+  border-radius: $radius-lg;
+  background-color: $color-primary;
+  color: $color-surface;
+}

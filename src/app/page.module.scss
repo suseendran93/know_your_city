@@ -1,0 +1,28 @@
+@use "../styles/variables" as *;
+
+.topRow {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: $space-md $space-md 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-sm;
+}
+
+.cityPill {
+  margin: 0;
+  color: $color-primary-strong;
+  background-color: $color-primary-soft;
+  border-radius: $radius-pill;
+  padding: $space-2xs $space-sm;
+}
+
+.settingsLink {
+  min-height: 2.5rem;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  background-color: $color-surface;
+  color: $color-primary-strong;
+  padding: $space-xs $space-sm;
+}

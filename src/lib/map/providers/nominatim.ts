@@ -1,4 +1,5 @@
 import { NOMINATIM_BASE_URL } from "@/lib/map/constants";
+import { normalizeCityName } from "@/lib/map/city";
 import { fetchJson, getAppIdentityHeaders } from "@/lib/map/request";
 import type { PlaceResult } from "@/types/location";
 
@@ -34,9 +35,10 @@ function mapPlace(result: NominatimSearchResult): PlaceResult {
   };
 }
 
-export async function searchPlaces(query: string, limit = 8) {
+export async function searchPlaces(query: string, city: string, limit = 8) {
+  const scopedQuery = `${query}, ${normalizeCityName(city)}, India`;
   const params = new URLSearchParams({
-    q: query,
+    q: scopedQuery,
     format: "jsonv2",
     addressdetails: "1",
     limit: String(limit)

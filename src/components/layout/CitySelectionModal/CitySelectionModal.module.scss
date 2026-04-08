@@ -1,0 +1,56 @@
+@use "../../../styles/variables" as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: $space-md;
+  background-color: rgba(29, 36, 51, 0.45);
+}
+
+.modal {
+  width: min(100%, 28rem);
+  border-radius: $radius-xl;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-md;
+  padding: $space-lg;
+}
+
+.title {
+  margin: 0 0 $space-xs;
+  color: $color-text;
+}
+
+.description {
+  margin: 0 0 $space-md;
+  color: $color-text-muted;
+}
+
+.label {
+  display: block;
+  margin-bottom: $space-xs;
+  color: $color-primary-strong;
+}
+
+.select {
+  width: 100%;
+  min-height: 3rem;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  padding: $space-sm $space-md;
+  background-color: $color-surface;
+  color: $color-text;
+}
+
+.saveButton {
+  width: 100%;
+  min-height: 3rem;
+  margin-top: $space-md;
+  border: 0;
+  border-radius: $radius-lg;
+  background-color: $color-primary;
+  color: $color-surface;
+}

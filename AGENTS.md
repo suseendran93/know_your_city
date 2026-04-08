@@ -18,6 +18,9 @@ These rules apply to this repository unless the user explicitly overrides them.
 - Keep validation messages, labels, button text, headings, empty states, and helper text in locale files.
 - Avoid hardcoded English strings in app UI unless they are temporary debugging text.
 - If new UI is added, update the locale JSON in the same change.
+- All user-facing text must be production-ready.
+- Do not ship internal wording such as `MVP`, `dummy`, `for now`, `test flow`, or implementation notes in user-facing copy.
+- Placeholder copy is allowed only for explicit loading states (for example, `Searching...`) and must still read as production-quality UX text.
 
 ### Component File Pattern
 For a component named `LocationCard`:
@@ -60,6 +63,18 @@ For a component named `LocationCard`:
 - Route-mode scoring should explain whether the selection is perfect, partial, or incorrect.
 - Route-mode option sets should include plausible connectors plus distractors, not only obvious correct answers.
 - Avoid generating route questions where source and destination are effectively the same place.
+
+## Auth And City Scope Rules
+- Use the local dummy auth flow for now; protect gameplay routes behind authenticated state.
+- First-time users must select a city before gameplay starts.
+- City selection must be editable later in Settings.
+- Current supported city options are only `Chennai` and `Bangalore` until expanded by user request.
+- UI copy should reflect the currently selected city instead of hardcoded city names.
+- API calls for place search, nearby places, and routing must include selected city context.
+- Gameplay data and generated questions should stay scoped to the selected city.
+- Every new feature must be city-aware by default.
+- Every new route, API handler, game mode, and data query must honor selected-city scope.
+- Do not introduce city-agnostic placeholders or default logic that ignores selected city.
 
 ## Folder Responsibilities
 

@@ -24,6 +24,7 @@ const initialSearchState: SearchState = {
 };
 
 type RouteModeScreenProps = {
+  cityName: string;
   content: {
     header: {
       kicker: string;
@@ -62,8 +63,10 @@ type RouteModeScreenProps = {
   };
 };
 
-async function searchPlaces(query: string): Promise<PlaceResult[]> {
-  const response = await fetch(`/api/places/search?q=${encodeURIComponent(query)}&limit=5`);
+async function searchPlaces(query: string, cityName: string): Promise<PlaceResult[]> {
+  const response = await fetch(
+    `/api/places/search?q=${encodeURIComponent(query)}&limit=5&city=${encodeURIComponent(cityName)}`
+  );
   const payload = (await response.json()) as { places?: PlaceResult[]; error?: string };
 
   if (!response.ok) {
@@ -73,7 +76,7 @@ async function searchPlaces(query: string): Promise<PlaceResult[]> {
   return payload.places ?? [];
 }
 
-export function RouteModeScreen({ content, actions, status }: RouteModeScreenProps) {
+export function RouteModeScreen({ cityName, content, actions, status }: RouteModeScreenProps) {
   const [fromSearch, setFromSearch] = useState<SearchState>(initialSearchState);
   const [toSearch, setToSearch] = useState<SearchState>(initialSearchState);
   const [selectedFrom, setSelectedFrom] = useState<PlaceResult | null>(null);
@@ -88,6 +91,7 @@ export function RouteModeScreen({ content, actions, status }: RouteModeScreenPro
 
   useDebouncedSearch(
     fromSearch.query,
+    cityName,
     selectedFrom,
     content.search.noResults,
     content.errors.searchFailed,
@@ -95,6 +99,7 @@ export function RouteModeScreen({ content, actions, status }: RouteModeScreenPro
   );
   useDebouncedSearch(
     toSearch.query,
+    cityName,
     selectedTo,
     content.search.noResults,
     content.errors.searchFailed,
@@ -148,7 +153,7 @@ export function RouteModeScreen({ content, actions, status }: RouteModeScreenPro
       return;
     }
 
-    setChallenge(getRouteConnectorChallenge(selectedFrom, selectedTo));
+    setChallenge(getRouteConnectorChallenge(selectedFrom, selectedTo, cityName));
     setSelectedConnectorIds([]);
     setSubmitted(false);
     setErrorMessage("");
@@ -350,6 +355,7 @@ function getFeedbackMessage(
 
 function useDebouncedSearch(
   query: string,
+  cityName: string,
   selectedPlace: PlaceResult | null,
   noResultsLabel: string,
   searchFailedLabel: string,
@@ -380,7 +386,7 @@ function useDebouncedSearch(
 
     const timeoutId = window.setTimeout(async () => {
       try {
-        const places = await searchPlaces(trimmedQuery);
+        const places = await searchPlaces(trimmedQuery, cityName);
 
         setState((previousState) => {
           if (previousState.query.trim() !== trimmedQuery) {
@@ -411,7 +417,7 @@ function useDebouncedSearch(
     }, 350);
 
     return () => window.clearTimeout(timeoutId);
-  }, [noResultsLabel, query, searchFailedLabel, selectedPlace, setState]);
+  }, [cityName, noResultsLabel, query, searchFailedLabel, selectedPlace, setState]);
 }
 
 type PlaceSearchCardProps = {

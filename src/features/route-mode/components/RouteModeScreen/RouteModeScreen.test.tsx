@@ -8,6 +8,7 @@ describe("RouteModeScreen", () => {
   it("renders basic route mode controls", () => {
     render(
       <RouteModeScreen
+        cityName="Chennai"
         content={messages.routeMode}
         actions={messages.common.actions}
         status={messages.common.status}
@@ -21,13 +22,14 @@ describe("RouteModeScreen", () => {
   it("keeps loading state hidden for single-character input", () => {
     render(
       <RouteModeScreen
+        cityName="Chennai"
         content={messages.routeMode}
         actions={messages.common.actions}
         status={messages.common.status}
       />
     );
 
-    const inputs = screen.getAllByPlaceholderText(/search a city, area, or landmark/i);
+    const inputs = screen.getAllByPlaceholderText(/search a place in/i);
     fireEvent.change(inputs[0], { target: { value: "a" } });
 
     expect(screen.queryByText(/searching/i)).not.toBeInTheDocument();
