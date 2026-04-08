@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/components/providers/AppProvider/AppProvider";
-import type { PlaceResult } from "@/types/location";
+import type { PlaceResult, RouteResult } from "@/types/location";
 import { interpolate } from "@/lib/i18n";
 import {
   getRouteConnectorChallenge,
@@ -24,6 +24,11 @@ const initialSearchState: SearchState = {
   error: ""
 };
 
+type RouteApiResponse = {
+  route?: RouteResult;
+  error?: string;
+};
+
 type RouteModeScreenProps = {
   cityName: string;
   content: {
@@ -43,6 +48,7 @@ type RouteModeScreenProps = {
       instruction: string;
       challengeTitle: string;
       submitHint: string;
+      routeSummary: string;
       selectedCount: string;
       answerCorrect: string;
       answerPartial: string;
@@ -58,6 +64,7 @@ type RouteModeScreenProps = {
     reset: string;
     submitAnswer: string;
     generateChallenge: string;
+    buildingRound: string;
   };
   status: {
     searching: string;
@@ -77,6 +84,32 @@ async function searchPlaces(query: string, cityName: string): Promise<PlaceResul
   return payload.places ?? [];
 }
 
+async function fetchRoute(
+  cityName: string,
+  start: { lat: number; lng: number },
+  end: { lat: number; lng: number }
+): Promise<RouteResult> {
+  const response = await fetch("/api/routes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      city: cityName,
+      start,
+      end
+    })
+  });
+
+  const payload = (await response.json()) as RouteApiResponse;
+
+  if (!response.ok || !payload.route) {
+    throw new Error(payload.error ?? "Failed to fetch route.");
+  }
+
+  return payload.route;
+}
+
 export function RouteModeScreen({ cityName, content, actions, status }: RouteModeScreenProps) {
   const { recordGameResult } = useAppContext();
   const [fromSearch, setFromSearch] = useState<SearchState>(initialSearchState);
@@ -84,6 +117,8 @@ export function RouteModeScreen({ cityName, content, actions, status }: RouteMod
   const [selectedFrom, setSelectedFrom] = useState<PlaceResult | null>(null);
   const [selectedTo, setSelectedTo] = useState<PlaceResult | null>(null);
   const [challenge, setChallenge] = useState<RouteConnectorChallenge | null>(null);
+  const [resolvedRoute, setResolvedRoute] = useState<RouteResult | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
   const [selectedConnectorIds, setSelectedConnectorIds] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -136,6 +171,8 @@ export function RouteModeScreen({ cityName, content, actions, status }: RouteMod
     }
 
     setChallenge(null);
+    setResolvedRoute(null);
+    setRouteLoading(false);
     setSubmitted(false);
     setErrorMessage("");
     setSelectedConnectorIds([]);
@@ -161,16 +198,33 @@ export function RouteModeScreen({ cityName, content, actions, status }: RouteMod
     }
   }
 
-  function generateChallenge() {
+  async function generateChallenge() {
     if (!selectedFrom || !selectedTo || selectedFrom.id === selectedTo.id) {
       return;
     }
 
-    setChallenge(getRouteConnectorChallenge(selectedFrom, selectedTo, cityName));
-    setSelectedConnectorIds([]);
-    setSubmitted(false);
-    setResultCommitted(false);
     setErrorMessage("");
+    setRouteLoading(true);
+
+    try {
+      const route = await fetchRoute(
+        cityName,
+        { lat: selectedFrom.lat, lng: selectedFrom.lng },
+        { lat: selectedTo.lat, lng: selectedTo.lng }
+      );
+
+      setResolvedRoute(route);
+      setChallenge(getRouteConnectorChallenge(selectedFrom, selectedTo, cityName, route));
+      setSelectedConnectorIds([]);
+      setSubmitted(false);
+      setResultCommitted(false);
+    } catch (error) {
+      setResolvedRoute(null);
+      setChallenge(null);
+      setErrorMessage(error instanceof Error ? error.message : content.errors.searchFailed);
+    } finally {
+      setRouteLoading(false);
+    }
   }
 
   function toggleConnector(connectorId: string) {
@@ -211,6 +265,8 @@ export function RouteModeScreen({ cityName, content, actions, status }: RouteMod
     setSelectedFrom(null);
     setSelectedTo(null);
     setChallenge(null);
+    setResolvedRoute(null);
+    setRouteLoading(false);
     setSelectedConnectorIds([]);
     setSubmitted(false);
     setResultCommitted(false);
@@ -260,10 +316,10 @@ export function RouteModeScreen({ cityName, content, actions, status }: RouteMod
         <button
           type="button"
           className={`${styles.primaryButton} type-button`}
-          onClick={generateChallenge}
-          disabled={!canGenerate}
+          onClick={() => void generateChallenge()}
+          disabled={!canGenerate || routeLoading}
         >
-          {actions.generateChallenge}
+          {routeLoading ? actions.buildingRound : actions.generateChallenge}
         </button>
         <button type="button" className={`${styles.secondaryButton} type-button`} onClick={resetAll}>
           {actions.reset}
@@ -280,6 +336,14 @@ export function RouteModeScreen({ cityName, content, actions, status }: RouteMod
             })}
           </h2>
           <p className={`type-body-sm ${styles.hint}`}>{content.game.submitHint}</p>
+          {resolvedRoute ? (
+            <p className={`type-body-sm ${styles.routeSummary}`}>
+              {interpolate(content.game.routeSummary, {
+                distanceKm: (resolvedRoute.distanceMeters / 1000).toFixed(1),
+                durationMin: Math.round(resolvedRoute.durationSeconds / 60)
+              })}
+            </p>
+          ) : null}
           <p className={`type-body-sm ${styles.countText}`}>
             {interpolate(content.game.selectedCount, { count: selectedCount })}
           </p>

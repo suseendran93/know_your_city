@@ -59,6 +59,7 @@
 .statusText,
 .errorText,
 .hint,
+.routeSummary,
 .countText,
 .feedback,
 .expectedText {
@@ -68,6 +69,7 @@
 .selectedPlace,
 .statusText,
 .hint,
+.routeSummary,
 .countText {
   color: $color-text-muted;
 }

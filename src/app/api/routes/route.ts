@@ -42,8 +42,33 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ route });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to fetch route.";
+    const rawMessage = error instanceof Error ? error.message : "Failed to fetch route.";
+    const message = mapRouteError(rawMessage);
 
     return NextResponse.json({ error: message }, { status: 502 });
   }
+}
+
+function mapRouteError(message: string) {
+  if (message.includes("Missing OPENROUTESERVICE_API_KEY")) {
+    return "Routing service is not configured. Add OPENROUTESERVICE_API_KEY in environment variables.";
+  }
+
+  if (message.includes("status 401") || message.includes("status 403")) {
+    return "Routing service authorization failed. Verify your OpenRouteService API key.";
+  }
+
+  if (message.includes("status 406")) {
+    return "Routing service rejected the request format. Please retry with a different place pair.";
+  }
+
+  if (message.includes("status 429")) {
+    return "Routing service rate limit reached. Please wait and try again.";
+  }
+
+  if (message.includes("status 5")) {
+    return "Routing service is temporarily unavailable. Please try again shortly.";
+  }
+
+  return message;
 }

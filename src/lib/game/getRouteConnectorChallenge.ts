@@ -1,4 +1,5 @@
 import type { PlaceResult } from "@/types/location";
+import type { RouteResult } from "@/types/location";
 
 export type RouteConnector = {
   id: string;
@@ -56,17 +57,54 @@ function getById(id: string, catalog: RouteConnector[]) {
   return catalog.find((connector) => connector.id === id);
 }
 
-function pickChennaiHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
-  const lngDelta = to.lng - from.lng;
-  const latDelta = to.lat - from.lat;
-  const distanceMagnitude = Math.hypot(latDelta, lngDelta);
+type RouteSignals = {
+  latDelta: number;
+  lngDelta: number;
+  spanLat: number;
+  spanLng: number;
+  routeDistanceMeters: number;
+};
+
+function getRouteSignals(from: PlaceResult, to: PlaceResult, route: RouteResult | null): RouteSignals {
+  if (!route || route.geometry.length === 0) {
+    const lngDelta = to.lng - from.lng;
+    const latDelta = to.lat - from.lat;
+    return {
+      latDelta,
+      lngDelta,
+      spanLat: Math.abs(latDelta),
+      spanLng: Math.abs(lngDelta),
+      routeDistanceMeters: Math.hypot(latDelta, lngDelta) * 111000
+    };
+  }
+
+  const lats = route.geometry.map((point) => point.lat);
+  const lngs = route.geometry.map((point) => point.lng);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  const firstPoint = route.geometry[0];
+  const lastPoint = route.geometry[route.geometry.length - 1];
+
+  return {
+    latDelta: lastPoint.lat - firstPoint.lat,
+    lngDelta: lastPoint.lng - firstPoint.lng,
+    spanLat: maxLat - minLat,
+    spanLng: maxLng - minLng,
+    routeDistanceMeters: route.distanceMeters
+  };
+}
+
+function pickChennaiHeuristicConnectors(from: PlaceResult, to: PlaceResult, signals: RouteSignals) {
+  const { lngDelta, latDelta, spanLat, spanLng, routeDistanceMeters } = signals;
   const picks: string[] = ["irr"];
 
-  if (Math.abs(latDelta) > 0.06) {
+  if (spanLat > 0.06 || Math.abs(latDelta) > 0.06) {
     picks.push("gst");
   }
 
-  if (Math.abs(lngDelta) > 0.08) {
+  if (spanLng > 0.08 || Math.abs(lngDelta) > 0.08) {
     picks.push("hundred-feet");
   }
 
@@ -82,7 +120,7 @@ function pickChennaiHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
     picks.push("poona");
   }
 
-  if (distanceMagnitude > 0.15) {
+  if (routeDistanceMeters > 18000) {
     picks.push("mount");
   } else {
     picks.push("sardar");
@@ -91,17 +129,15 @@ function pickChennaiHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
   return picks;
 }
 
-function pickBengaluruHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
-  const lngDelta = to.lng - from.lng;
-  const latDelta = to.lat - from.lat;
-  const distanceMagnitude = Math.hypot(latDelta, lngDelta);
+function pickBengaluruHeuristicConnectors(from: PlaceResult, to: PlaceResult, signals: RouteSignals) {
+  const { lngDelta, latDelta, spanLat, spanLng, routeDistanceMeters } = signals;
   const picks: string[] = ["orr"];
 
-  if (Math.abs(latDelta) > 0.06) {
+  if (spanLat > 0.06 || Math.abs(latDelta) > 0.06) {
     picks.push("hosur");
   }
 
-  if (Math.abs(lngDelta) > 0.08) {
+  if (spanLng > 0.08 || Math.abs(lngDelta) > 0.08) {
     picks.push("old-madras");
   }
 
@@ -113,7 +149,7 @@ function pickBengaluruHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
     picks.push("airport");
   }
 
-  if (distanceMagnitude > 0.15) {
+  if (routeDistanceMeters > 18000) {
     picks.push("tumkur");
   } else {
     picks.push("bannerghatta");
@@ -122,12 +158,18 @@ function pickBengaluruHeuristicConnectors(from: PlaceResult, to: PlaceResult) {
   return picks;
 }
 
-function pickHeuristicConnectors(from: PlaceResult, to: PlaceResult, cityName: string) {
+function pickHeuristicConnectors(
+  from: PlaceResult,
+  to: PlaceResult,
+  cityName: string,
+  route: RouteResult | null
+) {
   const city = normalizeConnectorCity(cityName);
+  const signals = getRouteSignals(from, to, route);
   const candidatePicks =
     city === "Bengaluru"
-      ? pickBengaluruHeuristicConnectors(from, to)
-      : pickChennaiHeuristicConnectors(from, to);
+      ? pickBengaluruHeuristicConnectors(from, to, signals)
+      : pickChennaiHeuristicConnectors(from, to, signals);
 
   const unique = Array.from(new Set(candidatePicks));
   const trimmed = unique.slice(0, 3);
@@ -155,10 +197,11 @@ function shuffle<T>(values: T[]) {
 export function getRouteConnectorChallenge(
   from: PlaceResult,
   to: PlaceResult,
-  cityName = "Chennai"
+  cityName = "Chennai",
+  route: RouteResult | null = null
 ): RouteConnectorChallenge {
   const catalog = getCatalog(cityName);
-  const expectedIds = pickHeuristicConnectors(from, to, cityName);
+  const expectedIds = pickHeuristicConnectors(from, to, cityName, route);
   const expectedConnectors = expectedIds
     .map((connectorId) => getById(connectorId, catalog))
     .filter((connector): connector is RouteConnector => Boolean(connector));

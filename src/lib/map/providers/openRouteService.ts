@@ -38,7 +38,8 @@ export async function getRoute(start: RoutePoint, end: RoutePoint): Promise<Rout
       method: "POST",
       headers: {
         Authorization: apiKey,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Accept: "application/geo+json, application/json"
       },
       body: JSON.stringify({
         coordinates: [

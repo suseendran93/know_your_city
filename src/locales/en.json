@@ -175,8 +175,9 @@
       "instruction": "Pick 2-3 connectors for {{from}} to {{to}}.",
       "challengeTitle": "Connector challenge",
       "submitHint": "Choose exactly 2 or 3 connectors before submitting.",
+      "routeSummary": "Live route: {{distanceKm}} km • ~{{durationMin}} min",
       "selectedCount": "Selected: {{count}}",
-      "answerCorrect": "Perfect. Your connector set matches the expected route logic.",
+      "answerCorrect": "Perfect. Your connector set matches the live route pattern.",
       "answerPartial": "Good try. You got {{count}} out of {{total}} expected connectors.",
       "answerWrong": "Not quite. None of your selections matched the expected connectors.",
       "expectedLabel": "Expected connectors:"
